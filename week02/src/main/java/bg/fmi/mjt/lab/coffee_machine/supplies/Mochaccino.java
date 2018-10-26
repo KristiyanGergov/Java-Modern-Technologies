@@ -1,7 +1,10 @@
-public class Espresso implements Beverage {
+package bg.fmi.mjt.lab.coffee_machine.supplies;
+
+public class Mochaccino implements Beverage {
+
     @Override
     public String getName() {
-        return null;
+        return "Mochaccino";
     }
 
     @Override
@@ -11,16 +14,16 @@ public class Espresso implements Beverage {
 
     @Override
     public double getCoffee() {
-        return 0;
+        return 18;
     }
 
     @Override
     public double getWater() {
-        return 0;
+        return 150;
     }
 
     @Override
     public double getCacao() {
-        return 0;
+        return 10;
     }
 }

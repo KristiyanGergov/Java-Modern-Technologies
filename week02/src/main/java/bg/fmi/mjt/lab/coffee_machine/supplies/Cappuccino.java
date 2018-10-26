@@ -1,18 +1,19 @@
-public class Mochaccino implements Beverage {
+package bg.fmi.mjt.lab.coffee_machine.supplies;
 
+public class Cappuccino implements Beverage {
     @Override
     public String getName() {
-        return null;
+        return "Cappuccino";
     }
 
     @Override
     public double getMilk() {
-        return 0;
+        return 150;
     }
 
     @Override
     public double getCoffee() {
-        return 0;
+        return 18;
     }
 
     @Override

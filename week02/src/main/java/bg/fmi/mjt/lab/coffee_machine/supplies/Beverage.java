@@ -1,3 +1,5 @@
+package bg.fmi.mjt.lab.coffee_machine.supplies;
+
 public interface Beverage {
 
     public String getName();
