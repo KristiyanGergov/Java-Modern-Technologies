@@ -37,7 +37,7 @@ public class Issue implements IIssue {
 
         // V A L I D A T I O N
         if (reporter == null || reporter.getUsername() == null)
-            throw new InvalidReporterException("Neither reporter nor reporter username can be null!");
+            throw new InvalidReporterException("Either reporter or reporter-username is null!");
         if (priority == null)
             throw new InvalidPriorityException("IssuePriority can't be null!");
         if (component == null || component.getCreator() == null || component.getName() == null || component.getShortName() == null)
@@ -86,15 +86,15 @@ public class Issue implements IIssue {
         return lastModifiedAt;
     }
 
-    public <T> T getT(T type) {
+    public <T> Object getT(T type) {
         if (type instanceof IssuePriority)
-            return (T)getPriority();
+            return getPriority();
         else if (type instanceof IssueStatus)
-            return (T)getStatus();
+            return getStatus();
         else if (type instanceof IssueResolution)
-            return (T)getResolution();
+            return getResolution();
         else if (type instanceof IssueType)
-            return (T)getType();
+            return getType();
         return null;
     }
 

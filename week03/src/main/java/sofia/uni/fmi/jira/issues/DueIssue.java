@@ -15,7 +15,7 @@ public class DueIssue extends Issue {
         return dueTime;
     }
 
-    DueIssue(IssuePriority priority, Component component, User reporter, String description, LocalDateTime dueTime) throws InvalidReporterException {
+    public DueIssue(IssuePriority priority, Component component, User reporter, String description, LocalDateTime dueTime) throws InvalidReporterException {
         super(priority, component, reporter, description);
         this.dueTime = dueTime;
     }
