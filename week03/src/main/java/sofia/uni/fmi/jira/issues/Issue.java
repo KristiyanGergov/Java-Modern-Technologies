@@ -33,9 +33,9 @@ public class Issue implements IIssue {
     private LocalDateTime lastModifiedAt;
 
 
-    public Issue(IssuePriority priority, Component component, User reporter, String description) throws InvalidReporterException, InvalidComponentException, InvalidDescriptionException, InvalidPriorityException {
+    public Issue(IssuePriority priority, Component component, User reporter, String description) throws InvalidReporterException {
 
-    // V A L I D A T I O N
+        // V A L I D A T I O N
         if (reporter == null || reporter.getUsername() == null)
             throw new InvalidReporterException();
         if (priority == null)
@@ -44,7 +44,7 @@ public class Issue implements IIssue {
             throw new InvalidComponentException();
         if (description == null)
             throw new InvalidDescriptionException();
-    // V A L I D A T I O N
+        // V A L I D A T I O N
 
         this.priority = priority;
         this.component = component;
@@ -84,5 +84,37 @@ public class Issue implements IIssue {
     @Override
     public LocalDateTime getLastModifiedAt() {
         return lastModifiedAt;
+    }
+
+    public <T> T getT(T type) {
+        if (type instanceof IssuePriority)
+            return (T)getPriority();
+        else if (type instanceof IssueStatus)
+            return (T)getStatus();
+        else if (type instanceof IssueResolution)
+            return (T)getResolution();
+        else if (type instanceof IssueType)
+            return (T)getType();
+        return null;
+    }
+
+    public IssuePriority getPriority() {
+        return priority;
+    }
+
+    public IssueStatus getStatus() {
+        return status;
+    }
+
+    public IssueType getType() {
+        return type;
+    }
+
+    public IssueResolution getResolution() {
+        return resolution;
+    }
+
+    public Component getComponent() {
+        return component;
     }
 }
