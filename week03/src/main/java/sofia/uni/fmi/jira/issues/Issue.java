@@ -37,13 +37,13 @@ public class Issue implements IIssue {
 
         // V A L I D A T I O N
         if (reporter == null || reporter.getUsername() == null)
-            throw new InvalidReporterException();
+            throw new InvalidReporterException("Neither reporter nor reporter username can be null!");
         if (priority == null)
-            throw new InvalidPriorityException();
+            throw new InvalidPriorityException("IssuePriority can't be null!");
         if (component == null || component.getCreator() == null || component.getName() == null || component.getShortName() == null)
-            throw new InvalidComponentException();
+            throw new InvalidComponentException("Some of Component fields is null or the component itself!");
         if (description == null)
-            throw new InvalidDescriptionException();
+            throw new InvalidDescriptionException("Description can't be null");
         // V A L I D A T I O N
 
         this.priority = priority;

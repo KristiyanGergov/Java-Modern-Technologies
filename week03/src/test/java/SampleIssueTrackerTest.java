@@ -55,7 +55,7 @@ public class SampleIssueTrackerTest {
     public void testFindTime() {
         Issue[] allBetween = jira.findAllIssuesCreatedBetween(
                 LocalDateTime.of(2018, 10, 20, 13, 54),
-                LocalDateTime.of(2018, 10, 30, 17, 0));
+                LocalDateTime.of(2018, 10, 30, 18, 0));
 
         Issue[] allBefore = jira.findAllBefore( LocalDateTime.of(2018, 10, 20, 13, 56));
 
