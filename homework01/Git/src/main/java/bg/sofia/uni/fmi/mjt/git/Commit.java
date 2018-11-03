@@ -5,11 +5,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class Commit {
     private String hash;
     private String message;
     private LocalDateTime date;
+    private ArrayList<String> files;
 
     public String getDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm yyyy");
@@ -21,10 +23,11 @@ public class Commit {
         this.date = date;
     }
 
-    public Commit(String message) {
+    public Commit(String message, ArrayList<String> files) {
         this.message = message;
         this.date = LocalDateTime.now();
         this.setHash();
+        this.files = files;
     }
 
     private void setHash() {
@@ -37,10 +40,6 @@ public class Commit {
 
     public String getMessage() {
         return message;
-    }
-
-    public Result log() {
-        return null;
     }
 
 
@@ -64,4 +63,7 @@ public class Commit {
         return hex.toString();
     }
 
+    public ArrayList<String> getFiles() {
+        return files;
+    }
 }

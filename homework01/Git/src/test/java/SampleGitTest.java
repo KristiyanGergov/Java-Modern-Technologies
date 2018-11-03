@@ -1,11 +1,9 @@
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import bg.sofia.uni.fmi.mjt.git.Repository;
 import bg.sofia.uni.fmi.mjt.git.Result;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class SampleGitTest {
 
@@ -14,6 +12,57 @@ public class SampleGitTest {
     @Before
     public void setUp() {
         repo = new Repository();
+    }
+
+    @Test
+    public void testDeleteFileAfterCheckoutCommit() {
+        repo.add("foo.txt");
+        repo.commit("Initial");
+
+        repo.add("boo.txt");
+        repo.commit("Second");
+
+        repo.add("goo.txt");
+        repo.commit("Third");
+
+        repo.remove("boo.txt");
+        repo.commit("Forth");
+
+        Result actual = repo.remove("boo.txt");
+        assertFail("'boo.txt' did not match any files", actual);
+
+        String hash = repo.getRepository().get("master").get(0).getHash();
+        repo.checkoutCommit(hash);
+
+        actual = repo.remove("boo.txt");
+        assertFail("'boo.txt' did not match any files", actual);
+
+        hash = repo.getRepository().get("master").get(2).getHash();
+        repo.checkoutCommit(hash);
+
+
+    }
+
+    @Test
+    public void testCheckoutCommit() {
+        Result result = repo.checkoutCommit("initial");
+        assertNotNull(result);
+    }
+
+    @Test
+    public void testRemoveSingleElement() {
+        repo.add("foo.txt", "bar.txt");
+        Result result = repo.remove("foo.txt", "baz.txt");
+
+        assertEquals("'baz.txt' did not match any files", result.getMessage());
+    }
+
+    @Test
+    public void testAdd_SameFile() {
+        repo.add("bar.txt", "baz.txt");
+        Result actual = repo.add("baz.txt");
+
+        assertEquals("'baz.txt' already exists", actual.getMessage());
     }
 
     @Test

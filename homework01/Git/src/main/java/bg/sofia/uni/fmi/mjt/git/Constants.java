@@ -4,7 +4,7 @@ public class Constants {
 
     public static final String SUCCESSFUL_ADD = "added %s to stage";
 
-    public static final String UNSUCCESSFUL_ADD = "'%s' already exist";
+    public static final String UNSUCCESSFUL_ADD = "'%s' already exists";
 
     public static final String UNSUCCESSFUL_COMMIT = "nothing to commit, working tree clean";
 
