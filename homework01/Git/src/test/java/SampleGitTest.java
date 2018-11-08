@@ -15,6 +15,32 @@ public class SampleGitTest {
     }
 
     @Test
+    public void testCheckoutCommitCanSwitchCommits() {
+        repo.add("test.txt", "repo.txt", "file.txt");
+        repo.commit("Added initial test");
+
+        repo.remove("repo.txt");
+        repo.commit("removed repo.txt");
+
+        repo.add("gosho", "tosho");
+        repo.commit("added two BFF");
+
+        repo.checkoutCommit(repo.getCurrentBranchCommits().get(0).getHash());
+        assertEquals(repo.getHead(), repo.getCurrentBranchCommits().get(0));
+    }
+
+
+    @Test
+    public void testRemoveFilesFromStage() {
+        repo.add("test.txt", "repo.txt", "files.txt", "gosho.txt", "tosho.txt");
+        repo.remove("test.txt");
+
+        Result result = repo.commit("added some test files");
+
+        assertEquals("4 files changed", result.getMessage());
+    }
+
+    @Test
     public void testDeleteFileAfterCheckoutCommit() {
         repo.add("foo.txt");
         repo.commit("Initial");

@@ -7,9 +7,10 @@ import static java.util.stream.Collectors.toList;
 public class Repository {
     private ArrayList<String> files;
     private int changedFiles;
-    private String currentBranch;
-    private String currentCommitHash;
+    private String branch;
+    private String commitHash;
     private Map<String, ArrayList<Commit>> repository;
+    private ArrayList<String> currentFiles;
 
     public Map<String, ArrayList<Commit>> getRepository() {
         return repository;
@@ -18,13 +19,14 @@ public class Repository {
     public Repository() {
         this.files = new ArrayList<>();
         this.changedFiles = 0;
-        this.currentBranch = "master";
+        this.branch = "master";
         this.repository = new LinkedHashMap<>();
-        this.repository.put(currentBranch, new ArrayList<>());
+        this.repository.put(branch, new ArrayList<>());
+        this.currentFiles = new ArrayList<>();
     }
 
-    public String getCurrentBranch() {
-        return currentBranch;
+    public String getBranch() {
+        return branch;
     }
 
     public Result createBranch(String name) {
@@ -43,7 +45,8 @@ public class Repository {
     public Result checkoutBranch(String name) {
         Result result = new Result();
         if (repository.containsKey(name)) {
-            this.currentBranch = name;
+            this.branch = name;
+            this.currentFiles = new ArrayList<>();
             result.setMessage(String.format(Constants.SUCCESSFUL_CHECKOUT_BRANCH, name));
             result.setSuccessful(true);
         } else {
@@ -71,7 +74,7 @@ public class Repository {
             result.setMessage(String.format(Constants.UNSUCCESSFUL_CHECKOUT_COMMIT, hash));
             result.setSuccessful(false);
         } else {
-            this.currentCommitHash = hash;
+            this.commitHash = hash;
             files = commit.get(0).getFiles();
             result.setMessage(String.format(Constants.SUCCESSFUL_CHECKOUT_COMMIT, hash));
             result.setSuccessful(true);
@@ -106,6 +109,7 @@ public class Repository {
             result.setMessage(String.format(Constants.SUCCESSFUL_ADD, sb.toString()));
             this.files.addAll(Arrays.asList(files));
             this.changedFiles += files.length;
+            this.currentFiles.addAll(Arrays.asList(files));
         }
 
         return result;
@@ -136,6 +140,11 @@ public class Repository {
                     indexes) {
                 index -= indexRemoval++;
                 sb.append(this.files.get(index)).append(", ");
+                for (String file :
+                        files) {
+                    if (currentFiles.contains(file))
+                        this.changedFiles -= 2;
+                }
                 this.files.remove(index);
             }
             sb.delete(sb.length() - 2, sb.length());
@@ -151,13 +160,14 @@ public class Repository {
 
         if (changedFiles > 0) {
             Commit commit = new Commit(message, new ArrayList<>(files));
-            this.currentCommitHash = commit.getHash();
+            this.commitHash = commit.getHash();
             ArrayList<Commit> commits = getCurrentBranchCommits();
             commits.add(commit);
             result.setSuccessful(true);
             result.setMessage(String.format(Constants.SUCCESSFUL_COMMIT, changedFiles));
-            this.repository.put(currentBranch, commits);
+            this.repository.put(branch, commits);
             this.changedFiles = 0;
+            this.currentFiles = new ArrayList<>();
         } else {
             result.setMessage(Constants.UNSUCCESSFUL_COMMIT);
             result.setSuccessful(false);
@@ -169,7 +179,7 @@ public class Repository {
         Result result = new Result();
 
         if (getCurrentBranchCommits().size() == 0) {
-            result.setMessage(String.format(Constants.UNSUCCESSFUL_LOG, currentBranch));
+            result.setMessage(String.format(Constants.UNSUCCESSFUL_LOG, branch));
             result.setSuccessful(false);
         } else {
             StringBuilder sb = new StringBuilder();
@@ -190,20 +200,16 @@ public class Repository {
     }
 
     public Commit getHead() {
-        int size = repository.get(currentBranch).size() - 1;
-        if (size < 0)
-            return null;
-
-        this.currentCommitHash = repository.get(currentBranch).get(size).getHash();
-        return repository.get(currentBranch).get(size);
+        int size = getCurrentBranchCommits().size() - 1;
+        return size < 0 ? null : repository.get(branch).get(size);
     }
 
-    private ArrayList<Commit> getCurrentBranchCommits() {
+    public ArrayList<Commit> getCurrentBranchCommits() {
         ArrayList<Commit> commits = new ArrayList<>();
         for (Commit commit :
-                repository.get(currentBranch)) {
+                repository.get(branch)) {
             commits.add(commit);
-            if (commit.getHash().equals(currentCommitHash))
+            if (commit.getHash().equals(commitHash))
                 break;
         }
         return commits;
