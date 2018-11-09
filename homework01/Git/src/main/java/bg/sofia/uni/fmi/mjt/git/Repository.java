@@ -6,11 +6,12 @@ import static java.util.stream.Collectors.toList;
 
 public class Repository {
     private ArrayList<String> files;
+    private ArrayList<String> currentFiles;
     private int changedFiles;
+
     private String branch;
     private String commitHash;
     private Map<String, ArrayList<Commit>> repository;
-    private ArrayList<String> currentFiles;
 
     public Map<String, ArrayList<Commit>> getRepository() {
         return repository;
@@ -60,22 +61,18 @@ public class Repository {
     public Result checkoutCommit(String hash) {
         Result result = new Result();
 
-        if (getCurrentBranchCommits() == null || getCurrentBranchCommits().size() == 0) {
-            result.setMessage(String.format(Constants.UNSUCCESSFUL_CHECKOUT_COMMIT, hash));
-            result.setSuccessful(false);
-            return result;
-        }
-
-        List<Commit> commit = getCurrentBranchCommits()
+        Commit commit = getCurrentBranchCommits()
                 .stream()
                 .filter(t -> t.getHash().equals(hash))
-                .collect(toList());
-        if (commit.size() == 0) {
+                .findFirst()
+                .orElse(null);
+
+        if (commit == null) {
             result.setMessage(String.format(Constants.UNSUCCESSFUL_CHECKOUT_COMMIT, hash));
             result.setSuccessful(false);
         } else {
             this.commitHash = hash;
-            files = commit.get(0).getFiles();
+            files = commit.getFiles();
             result.setMessage(String.format(Constants.SUCCESSFUL_CHECKOUT_COMMIT, hash));
             result.setSuccessful(true);
         }
@@ -87,40 +84,35 @@ public class Repository {
             return null;
         Result result = new Result();
         StringBuilder sb = new StringBuilder();
-        boolean contained = false;
 
         for (String file :
                 files) {
             sb.append(file).append(", ");
-            if (this.files != null && this.files.indexOf(file) != -1) {
+
+            if (this.files.indexOf(file) != -1) {
                 sb.delete(0, sb.length());
                 sb.append(file);
-                contained = true;
-                break;
+
+                result.setMessage(String.format(Constants.UNSUCCESSFUL_ADD, sb.toString()));
+                result.setSuccessful(false);
+
+                return result;
             }
         }
 
-        if (contained) {
-            result.setMessage(String.format(Constants.UNSUCCESSFUL_ADD, sb.toString()));
-            result.setSuccessful(false);
-        } else {
-            result.setSuccessful(true);
-            sb.delete(sb.length() - 2, sb.length());
-            result.setMessage(String.format(Constants.SUCCESSFUL_ADD, sb.toString()));
-            this.files.addAll(Arrays.asList(files));
-            this.changedFiles += files.length;
-            this.currentFiles.addAll(Arrays.asList(files));
-        }
+        result.setSuccessful(true);
+        sb.delete(sb.length() - 2, sb.length());
+        result.setMessage(String.format(Constants.SUCCESSFUL_ADD, sb.toString()));
+        this.files.addAll(Arrays.asList(files));
+        this.changedFiles += files.length;
+        this.currentFiles.addAll(Arrays.asList(files));
 
         return result;
     }
 
     public Result remove(String... files) {
-        if (files.length == 0)
-            return null;
         Result result = new Result();
-        List<Integer> indexes = new LinkedList<>();
-        boolean contained = true;
+        Set<Integer> indexes = new HashSet<>();
         for (String file :
                 files) {
             int index = this.files.indexOf(file);
@@ -129,29 +121,28 @@ public class Repository {
             } else {
                 result.setMessage(String.format(Constants.UNSUCCESSFUL_REMOVE, file));
                 result.setSuccessful(false);
-                contained = false;
-                break;
+                return result;
             }
         }
-        if (contained) {
-            StringBuilder sb = new StringBuilder();
-            int indexRemoval = 0;
-            for (int index :
-                    indexes) {
-                index -= indexRemoval++;
-                sb.append(this.files.get(index)).append(", ");
-                for (String file :
-                        files) {
-                    if (currentFiles.contains(file))
-                        this.changedFiles -= 2;
-                }
-                this.files.remove(index);
+
+        StringBuilder sb = new StringBuilder();
+        int indexRemoval = 0;
+        for (int index :
+                indexes) {
+            index -= indexRemoval++;
+            sb.append(this.files.get(index)).append(", ");
+            for (String file :
+                    files) {
+                if (currentFiles.contains(file))
+                    this.changedFiles -= 2;
             }
-            sb.delete(sb.length() - 2, sb.length());
-            result.setMessage(String.format(Constants.SUCCESSFUL_REMOVE, sb.toString()));
-            result.setSuccessful(true);
-            this.changedFiles += files.length;
+            this.files.remove(index);
         }
+        sb.delete(sb.length() - 2, sb.length());
+        result.setMessage(String.format(Constants.SUCCESSFUL_REMOVE, sb.toString()));
+        result.setSuccessful(true);
+        this.changedFiles += files.length;
+
         return result;
     }
 
@@ -201,10 +192,10 @@ public class Repository {
 
     public Commit getHead() {
         int size = getCurrentBranchCommits().size() - 1;
-        return size < 0 ? null : repository.get(branch).get(size);
+        return size == -1 ? null : repository.get(branch).get(size);
     }
 
-    public ArrayList<Commit> getCurrentBranchCommits() {
+    private ArrayList<Commit> getCurrentBranchCommits() {
         ArrayList<Commit> commits = new ArrayList<>();
         for (Commit commit :
                 repository.get(branch)) {
