@@ -2,8 +2,6 @@ package bg.sofia.uni.fmi.mjt.git;
 
 import java.util.*;
 
-import static java.util.stream.Collectors.toList;
-
 public class Repository {
     private ArrayList<String> files;
     private ArrayList<String> currentFiles;

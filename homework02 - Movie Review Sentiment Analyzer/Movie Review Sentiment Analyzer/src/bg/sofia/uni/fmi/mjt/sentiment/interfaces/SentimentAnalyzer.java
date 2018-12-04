@@ -1,8 +1,9 @@
 package bg.sofia.uni.fmi.mjt.sentiment.interfaces;
 
 import java.util.Collection;
+import java.util.Iterator;
 
-public interface SentimentAnalyzer {
+public interface SentimentAnalyzer extends Iterator {
 
     /**
      * @param review the text of the review
