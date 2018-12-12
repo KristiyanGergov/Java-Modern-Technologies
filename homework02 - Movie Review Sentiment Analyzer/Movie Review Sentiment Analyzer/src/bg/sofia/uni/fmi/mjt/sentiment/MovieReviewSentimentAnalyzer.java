@@ -1,9 +1,10 @@
 package bg.sofia.uni.fmi.mjt.sentiment;
 
-import bg.sofia.uni.fmi.mjt.sentiment.interfaces.SentimentAnalyzer;
-
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 
@@ -11,15 +12,54 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
     BufferedReader reviewsInput;
     BufferedWriter reviewsOutput;
 
-    HashMap<String, TreeMap<Integer, Double>> words;
-    HashMap<Double, String> values;
+    HashMap<String, Pair> words;
+    HashMap<String, Pair> frequencyWords;
+    HashMap<String, Double> mostValuedWords;
+    HashMap<String, Double> leastValuedWords;
+    HashSet<String> stopwords;
+
+    private LinkedList<String> getMostValued() {
+
+        LinkedList<String> result = new LinkedList<>();
+        double MaxValue = 0;
+
+        for (Map.Entry<String, Pair> entry :
+                words.entrySet()) {
+
+            double currentValue = entry.getValue().getValue();
+
+            if (currentValue > MaxValue) {
+                result.add(entry.getKey());
+            }
+        }
+
+        return result;
+    }
+
+    private void initSortedCollections() {
+        this.frequencyWords = words
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Comparator.comparing(o -> o.getValue().getCount())))
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
+//        this.mostValuedWords = words
+//                .entrySet()
+//                .stream()
+//                .sorted(Comparator.comparing(o -> o.getValue().getValue()))
+//                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
+//                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+
+    }
 
     public MovieReviewSentimentAnalyzer(InputStream stopwordsInput, InputStream reviewsInput, OutputStream reviewsOutput) {
         this.stopwordsInput = new BufferedReader(new InputStreamReader(stopwordsInput));
         this.reviewsInput = new BufferedReader(new InputStreamReader(reviewsInput));
-//        this.reviewsOutput = new BufferedWriter(new OutputStreamWriter(reviewsOutput));
+        this.reviewsOutput = new BufferedWriter(new OutputStreamWriter(reviewsOutput));
+        this.stopwords = getReviewsStopWords();
         this.words = getReviewsWords();
-        this.values = new HashMap<>();
+        initSortedCollections();
     }
 
     @Override
@@ -60,13 +100,13 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
     @Override
     public double getWordSentiment(String word) {
 
-        TreeMap<Integer, Double> wordCountAndValue = words.get(word);
+        Pair wordCountAndValue = words.get(word);
 
         if (wordCountAndValue == null) {
             return -1;
         }
 
-        return (double) wordCountAndValue.firstEntry().getValue() / wordCountAndValue.firstEntry().getKey();
+        return wordCountAndValue.getValue();
     }
 
     @Override
@@ -76,28 +116,51 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 
     @Override
     public Collection<String> getMostFrequentWords(int n) {
+
         if (n < 0 || n > words.size()) {
             throw new IllegalArgumentException("N is either negative or bigger than the map size!");
         }
 
+        LinkedList<String> mostFrequentWords = new LinkedList<>();
 
-        Collection<String> mostFrequentWords = new LinkedList<>();
+        int count = 0;
+        for (Map.Entry<String, Pair> entry :
+                frequencyWords.entrySet()) {
 
-        for (int i = 0; i < n; i++) {
-            words.get(i);
+            if (count++ == n) break;
+
+            mostFrequentWords.add(entry.getKey());
         }
 
-        return null;
+        return mostFrequentWords.size() > 0 ? mostFrequentWords : null;
     }
 
     @Override
     public Collection<String> getMostPositiveWords(int n) {
-        return null;
+
+        LinkedList<String> res = getMostValued();
+
+        LinkedList<String> result = new LinkedList<>();
+
+        for (int i = n - 1; i >= 0; i--) {
+            result.add(res.get(i));
+        }
+
+        return result;
     }
 
     @Override
     public Collection<String> getMostNegativeWords(int n) {
-        return null;
+
+        LinkedList<String> res = getMostValued();
+
+        LinkedList<String> result = new LinkedList<>();
+
+        for (int i = 0; i < n; i++) {
+            result.add(res.get(i));
+        }
+
+        return result;
     }
 
     @Override
@@ -107,12 +170,12 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 
     @Override
     public int getSentimentDictionarySize() {
-        return 0;
+        return this.words.size();
     }
 
     @Override
     public boolean isStopWord(String word) {
-        return false;
+        return stopwords.contains(word);
     }
 
     @Override
@@ -142,10 +205,9 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
         return stopwords;
     }
 
-    private HashMap<String, TreeMap<Integer, Double>> getReviewsWords() {
+    private HashMap<String, Pair> getReviewsWords() {
 
-        HashMap<String, TreeMap<Integer, Double>> words = new HashMap<>();
-        HashSet<String> stopwords = getReviewsStopWords();
+        HashMap<String, Pair> words = new HashMap<>();
         String line;
 
         try {
@@ -157,22 +219,16 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
 
                 for (int i = 1; i < wordsFromLine.length; i++) {
 
-                    String word = wordsFromLine[i];
+                    String word = wordsFromLine[i].toLowerCase();
 
-                    if (stopwords.contains(word)) {
+                    if (stopwords.contains(word) || !word.matches("[a-zA-Z0-9]*")) {
                         continue;
                     }
 
                     if (words.containsKey(word)) {
-                        int count = words.get(word).firstEntry().getKey();
-                        double value = words.get(word).firstEntry().getValue();
-
-                        words.get(word).clear();
-
-                        words.get(word).put(++count, value + rating);
+                        words.get(word).increment(rating);
                     } else {
-                        TreeMap<Integer, Double> initialWordRate = new TreeMap<>();
-                        initialWordRate.put(1, (double) rating);
+                        Pair initialWordRate = new Pair();
                         words.put(word, initialWordRate);
                     }
                 }
