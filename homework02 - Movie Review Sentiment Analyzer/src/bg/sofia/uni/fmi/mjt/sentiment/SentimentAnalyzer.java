@@ -3,26 +3,26 @@ package bg.sofia.uni.fmi.mjt.sentiment;
 import java.util.Collection;
 import java.util.Iterator;
 
-public interface SentimentAnalyzer extends Iterator {
+public interface SentimentAnalyzer {
 
     /**
      * @param review the text of the review
      * @return the review sentiment as a floating-point number in the interval [0.0,
-     *         4.0] if known, and -1.0 if unknown
+     * 4.0] if known, and -1.0 if unknown
      */
     public double getReviewSentiment(String review);
 
     /**
      * @param review the text of the review
      * @return the review sentiment as a name: "negative", "somewhat negative",
-     *         "neutral", "somewhat positive", "positive"
+     * "neutral", "somewhat positive", "positive"
      */
     public String getReviewSentimentAsName(String review);
 
     /**
      * @param word
      * @return the review sentiment of the word as a floating-point number in the
-     *         interval [0.0, 4.0] if known, and -1.0 if unknown
+     * interval [0.0, 4.0] if known, and -1.0 if unknown
      */
     public double getWordSentiment(String word);
 
@@ -50,7 +50,7 @@ public interface SentimentAnalyzer extends Iterator {
     public Collection<String> getMostNegativeWords(int n);
 
     /**
-     * @param review The text part of the review
+     * @param review         The text part of the review
      * @param sentimentValue The given rating
      */
     public void appendReview(String review, int sentimentValue);

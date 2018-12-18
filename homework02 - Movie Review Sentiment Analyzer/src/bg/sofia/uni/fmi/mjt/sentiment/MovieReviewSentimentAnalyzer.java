@@ -41,6 +41,8 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue,
                     (oldValue, newValue) -> oldValue, LinkedHashMap::new));
 
+        valueWords.clear();
+
         for (Map.Entry<String, Pair> entry :
                 words.entrySet()) {
             double value = entry.getValue().getValue();
@@ -85,7 +87,7 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
                 count++;
             }
         }
-        return result == 0 ? -1 : result / count;
+        return count == 0 ? -1 : result / count;
     }
 
     // R A T I N G S
@@ -152,8 +154,7 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
             mostFrequentWords.add(entry.getKey());
         }
 
-        return mostFrequentWords.size() > 0 ? mostFrequentWords : null;
-
+        return mostFrequentWords;
     }
 
     @Override
@@ -193,9 +194,17 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
     @Override
     public void appendReview(String review, int sentimentValue) {
 
+        final int maximumSentimentValue = 4;
+
+        if (review == null
+                || sentimentValue < 0
+                || sentimentValue > maximumSentimentValue)
+            throw new IllegalArgumentException();
+
         try {
             reviewsOutput.write(sentimentValue + " " + review);
             reviewsOutput.write(System.lineSeparator());
+            reviewsOutput.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -212,16 +221,6 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
     @Override
     public boolean isStopWord(String word) {
         return stopwords.contains(word);
-    }
-
-    @Override
-    public boolean hasNext() {
-        return true;
-    }
-
-    @Override
-    public Object next() {
-        return null;
     }
 
     private HashSet<String> getReviewsStopWords() {

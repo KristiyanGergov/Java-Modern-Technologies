@@ -52,16 +52,14 @@ public class MovieReviewSentimentAnalyzerTest {
         String message = "escapades introspective misfortune Aggressive realization";
         double escapades = analyzer.getReviewSentiment("escapades");
         double introspective = analyzer.getWordSentiment("introspective");
-        double misfortune = analyzer.getWordSentiment("misfortune");
         double aggressive = analyzer.getWordSentiment("aggressive");
         double realization = analyzer.getWordSentiment("realization");
 
         final double delta = 0.0001;
-        final double testingElementsCount = 5.0;
+        final double testingElementsCount = 4.0;
 
         assertEquals((escapades +
                         introspective +
-                        misfortune +
                         aggressive +
                         realization) / testingElementsCount,
                 analyzer.getReviewSentiment(message), delta);
@@ -91,19 +89,36 @@ public class MovieReviewSentimentAnalyzerTest {
     @Test
     public void testGetReviewSentimentAsName() {
         String line = "movie staggeringly overcome witless changes fascinating";
-        assertEquals("somewhat negative", analyzer.getReviewSentimentAsName(line));
+        assertEquals("somewhat positive", analyzer.getReviewSentimentAsName(line));
 
         line = "laughs like cartoonish Charlie character";
-        assertEquals("somewhat negative", analyzer.getReviewSentimentAsName(line));
+        assertEquals("somewhat positive", analyzer.getReviewSentimentAsName(line));
 
         line = "delightful thriller incompetent sulky drama";
-        assertEquals("somewhat negative", analyzer.getReviewSentimentAsName(line));
+        assertEquals("positive", analyzer.getReviewSentimentAsName(line));
     }
 
     @Test
     public void testValueWordsReturnsCorrectResult() {
-        String word = analyzer.getReview(1.2);
+        String word = analyzer.getReview(4);
+        assertEquals("year", word);
+        assertEquals("sweet", analyzer.getReview(2.5));
+    }
 
-        int a = 5;
+    @Test
+    public void testGetReviewSentimentReturnsMinusOne() {
+        assertEquals(-1, analyzer.getReviewSentiment(null), delta);
+    }
+
+    @Test
+    public void testAddReview() {
+
+        final int sentimentValue = 4;
+        String review = "test";
+
+        analyzer.appendReview(review, sentimentValue);
+
+        assertEquals(analyzer.getReviewSentimentAsName(review), "positive");
+
     }
 }
