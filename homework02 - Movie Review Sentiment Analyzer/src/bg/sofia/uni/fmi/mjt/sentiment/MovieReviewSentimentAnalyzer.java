@@ -68,41 +68,46 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
     public double getReviewSentiment(String review) {
 
         double result = 0d;
+        int count = 0;
+
+        if (review == null)
+            return -1;
 
         String[] reviewWords = review.split("(?![A-Za-z0-9]+).");
+
 
         for (String word :
                 reviewWords) {
             double adder = getWordSentiment(word);
 
-            if (adder != -1)
+            if (adder != -1) {
                 result += adder;
+                count++;
+            }
         }
-
-        return result == 0 ? -1 : result / reviewWords.length;
+        return result == 0 ? -1 : result / count;
     }
 
     // R A T I N G S
-    private final static int UNKNOWN = 0;
-    private final static double NEGATIVE = 1.4999;
-    private final static double SOMEWHAT_NEGATIVE = 2.4999;
-    private final static double NEUTRAL = 3.4999;
-    private final static double SOMEWHAT_POSITIVE = 4.4999;
+    private final static double NEGATIVE = 0;
+    private final static double SOMEWHAT_NEGATIVE = 1;
+    private final static double NEUTRAL = 2;
+    private final static double SOMEWHAT_POSITIVE = 3;
 
     @Override
     public String getReviewSentimentAsName(String review) {
 
-        double reviewSentiment = getReviewSentiment(review);
+        int reviewSentiment = (int) Math.round(getReviewSentiment(review));
 
-        if (reviewSentiment < UNKNOWN) {
+        if (reviewSentiment < NEGATIVE) {
             return "unknown";
-        } else if (reviewSentiment < NEGATIVE) {
+        } else if (reviewSentiment == NEGATIVE) {
             return "negative";
-        } else if (reviewSentiment < SOMEWHAT_NEGATIVE) {
+        } else if (reviewSentiment == SOMEWHAT_NEGATIVE) {
             return "somewhat negative";
-        } else if (reviewSentiment < NEUTRAL) {
+        } else if (reviewSentiment == NEUTRAL) {
             return "neutral";
-        } else if (reviewSentiment < SOMEWHAT_POSITIVE) {
+        } else if (reviewSentiment == SOMEWHAT_POSITIVE) {
             return "somewhat positive";
         } else {
             return "positive";
@@ -148,6 +153,7 @@ public class MovieReviewSentimentAnalyzer implements SentimentAnalyzer {
         }
 
         return mostFrequentWords.size() > 0 ? mostFrequentWords : null;
+
     }
 
     @Override
