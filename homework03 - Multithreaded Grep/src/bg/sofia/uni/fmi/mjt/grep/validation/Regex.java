@@ -9,7 +9,7 @@ public class Regex {
     private Matcher matcher;
 
     public Regex() {
-        pattern = Pattern.compile("^grep\\s([-w]*[-i]*)\\s(.+)\\s(.+)\\s(.+)\\s*(.*)$");
+        pattern = Pattern.compile("^grep\\s*([-w]*[-i]*)\\s(\\w+)\\s(.+)\\s(\\d+)\\s*(.*)$");
     }
 
     public boolean validateInput(String command) {

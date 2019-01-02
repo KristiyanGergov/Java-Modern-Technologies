@@ -1,7 +1,7 @@
 package bg.sofia.uni.fmi.mjt.grep.IO;
 
 import bg.sofia.uni.fmi.mjt.grep.constants.RegexGroups;
-import bg.sofia.uni.fmi.mjt.grep.exceptions.UnknownLineTypeException;
+import bg.sofia.uni.fmi.mjt.grep.utility.CommandExecutor;
 import bg.sofia.uni.fmi.mjt.grep.validation.Regex;
 
 import java.io.*;
@@ -11,26 +11,6 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 public class Reader {
-
-    private static boolean checkIfStringIsContained(String line, String word, String type) {
-
-        switch (type) {
-
-            case "":
-                return line.contains(word);
-            case "-w":
-                return line.matches("^.*\\b(" + word + ")\\b.*$");
-            case "-i":
-                return line.toLowerCase().contains(word.toLowerCase());
-            case "-w-i":
-            case "-i-w":
-                return line.toLowerCase().matches("^.*\\b(" + word.toLowerCase() + ")\\b.*$");
-
-            default:
-                throw new UnknownLineTypeException("Wrong line type provided!");
-        }
-    }
-
 
     public String readLineFromConsole() throws IOException {
         try (BufferedReader reader =
@@ -43,6 +23,8 @@ public class Reader {
     public void read(Regex regex) throws IOException {
 
         int lineCount;
+
+        CommandExecutor executor = new CommandExecutor();
 
         try (Stream<Path> paths = Files.walk(Paths.get(regex.getMatcherGroupById(RegexGroups.PATH_TO_DIRECTORY_TREE)))) {
 
@@ -60,21 +42,7 @@ public class Reader {
                     lineCount = 1;
 
                     while ((line = reader.readLine()) != null) {
-                        boolean wordIsContained = checkIfStringIsContained(
-                                line,
-                                regex.getMatcherGroupById(RegexGroups.STRING_TO_FIND),
-                                regex.getMatcherGroupById(RegexGroups.PARAMETERS));
-
-                        if (wordIsContained) {
-
-                            String output = path.toString()
-                                    .substring(regex.getMatcherGroupById(RegexGroups.PATH_TO_DIRECTORY_TREE).length() + 1)
-                                    + ":" + lineCount + ":" + line + "\n";
-
-                            Writer writer = new Writer();
-                            writer.write(output, regex);
-                        }
-
+                        executor.execute(line, regex, path, lineCount);
                         lineCount++;
                     }
 
