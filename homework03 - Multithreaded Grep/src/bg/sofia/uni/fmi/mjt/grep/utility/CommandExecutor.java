@@ -2,11 +2,9 @@ package bg.sofia.uni.fmi.mjt.grep.utility;
 
 import bg.sofia.uni.fmi.mjt.grep.IO.Writer;
 import bg.sofia.uni.fmi.mjt.grep.constants.RegexGroups;
-import bg.sofia.uni.fmi.mjt.grep.exceptions.UnknownLineTypeException;
 import bg.sofia.uni.fmi.mjt.grep.validation.Regex;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class CommandExecutor {
 
@@ -14,8 +12,6 @@ public class CommandExecutor {
 
         switch (type) {
 
-            case "":
-                return line.contains(word);
             case "-w":
                 return line.matches("^.*\\b(" + word + ")\\b.*$");
             case "-i":
@@ -25,12 +21,12 @@ public class CommandExecutor {
                 return line.toLowerCase().matches("^.*\\b(" + word.toLowerCase() + ")\\b.*$");
 
             default:
-                throw new UnknownLineTypeException("Wrong line type provided!");
+                return line.contains(word);
         }
     }
 
 
-    public void execute(String line, Regex regex, Path path, int lineCount) throws IOException {
+    public void execute(String line, Regex regex, String path, int lineCount) throws IOException {
 
         boolean wordIsContained = checkIfStringIsContained(
                 line,
@@ -39,7 +35,7 @@ public class CommandExecutor {
 
         if (wordIsContained) {
 
-            String output = path.toString()
+            String output = path
                     .substring(regex.getMatcherGroupById(RegexGroups.PATH_TO_DIRECTORY_TREE).length() + 1)
                     + ":" + lineCount + ":" + line + "\n";
 

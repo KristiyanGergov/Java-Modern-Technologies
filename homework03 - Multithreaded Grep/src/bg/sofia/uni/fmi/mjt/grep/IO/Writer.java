@@ -16,7 +16,7 @@ public class Writer {
         } else {
             try (BufferedWriter writer =
                          new BufferedWriter(new FileWriter(
-                                 regex.getMatcherGroupById(RegexGroups.PATH_TO_OUTPUT_FILE)))) {
+                                 regex.getMatcherGroupById(RegexGroups.PATH_TO_OUTPUT_FILE), true))) {
                 writer.write(output);
                 writer.flush();
             }

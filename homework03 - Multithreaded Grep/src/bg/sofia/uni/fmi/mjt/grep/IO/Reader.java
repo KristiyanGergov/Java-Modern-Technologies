@@ -26,14 +26,13 @@ public class Reader {
 
         CommandExecutor executor = new CommandExecutor();
 
-        try (Stream<Path> paths = Files.walk(Paths.get(regex.getMatcherGroupById(RegexGroups.PATH_TO_DIRECTORY_TREE)))) {
+        try (Stream<Path> paths =
+                     Files.walk(Paths.get(regex.getMatcherGroupById(RegexGroups.PATH_TO_DIRECTORY_TREE)))) {
 
             for (Object entry :
                     paths.toArray()) {
 
-                Path path = (Path) entry;
-
-                File file = new File(path.toString());
+                File file = new File(entry.toString());
 
                 try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 
@@ -42,17 +41,15 @@ public class Reader {
                     lineCount = 1;
 
                     while ((line = reader.readLine()) != null) {
-                        executor.execute(line, regex, path, lineCount);
+                        executor.execute(line, regex, entry.toString(), lineCount);
                         lineCount++;
                     }
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignore) {
                 }
             }
 
         }
-
 
     }
 
