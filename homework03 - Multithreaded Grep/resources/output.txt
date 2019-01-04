@@ -1,3 +1,0 @@
-ristiyan Gergov\Desktop\Projects\Java-Modern-Technologies\homework03 - Multithreaded Grep\resources\Test.txt:1:tEst
-ristiyan Gergov\Desktop\Projects\Java-Modern-Technologies\homework03 - Multithreaded Grep\resources\Test.txt:2:test
-ristiyan Gergov\Desktop\Projects\Java-Modern-Technologies\homework03 - Multithreaded Grep\resources\Test.txt:3:TEST

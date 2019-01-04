@@ -19,12 +19,8 @@ public class Main {
 
                 Matcher matcher = Regex.validateInput(reader.readLine());
 
-                if (matcher.matches()) {
-
-                    CommandExecutor commandExecutor = new CommandExecutor();
-                    commandExecutor.execute(matcher);
-
-                }
+                if (matcher.matches())
+                    CommandExecutor.execute(matcher);
             }
 
         } catch (IOException e) {

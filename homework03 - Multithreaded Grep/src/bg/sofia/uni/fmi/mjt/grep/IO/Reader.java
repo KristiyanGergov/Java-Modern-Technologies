@@ -18,7 +18,7 @@ public class Reader extends Thread {
         this.matcher = matcher;
     }
 
-    private static boolean checkIfStringIsContained(String line, String word, String type) {
+    private boolean checkIfStringIsContained(String line, String word, String type) {
 
         switch (type) {
 

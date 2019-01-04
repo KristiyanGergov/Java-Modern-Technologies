@@ -15,7 +15,7 @@ import java.util.stream.Stream;
 
 public class CommandExecutor {
 
-    public void execute(Matcher matcher) {
+    public static void execute(Matcher matcher) {
 
         try (Stream<Path> paths =
                      Files.walk(Paths.get(matcher.group(RegexGroups.PATH_TO_DIRECTORY_TREE)))) {
@@ -36,10 +36,10 @@ public class CommandExecutor {
 
                 for (int j = i; j < numberOfThreads + i; j++) {
                     if (threads.get(j) != null) {
-                        threads.get(j).run();
+                        threads.get(j).start();
                     }
+                    System.out.println(Thread.getAllStackTraces().keySet().size());
                 }
-
             }
 
         } catch (IOException e) {
