@@ -65,9 +65,8 @@ public class Reader extends Thread {
                 lineCount++;
             }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Either invalid input file or output path file!");
+        } catch (IOException ignore) {
+            //Ignore it because it is a file that cannot be read
         }
 
     }

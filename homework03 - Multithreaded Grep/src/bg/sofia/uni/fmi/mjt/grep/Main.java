@@ -12,18 +12,12 @@ public class Main {
 
     public static void main(String[] args) {
 
-        try {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
 
+            //noinspection InfiniteLoopStatement
             while (true) {
 
-                String command;
-
-                try (BufferedReader reader =
-                             new BufferedReader(new InputStreamReader(System.in))) {
-                    command = reader.readLine();
-                }
-
-                Matcher matcher = Regex.validateInput(command);
+                Matcher matcher = Regex.validateInput(reader.readLine());
 
                 if (matcher.matches()) {
 
@@ -32,9 +26,9 @@ public class Main {
 
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
