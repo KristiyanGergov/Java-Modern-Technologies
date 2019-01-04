@@ -1,50 +1,51 @@
 package bg.sofia.uni.fmi.mjt.grep.utility;
 
-import bg.sofia.uni.fmi.mjt.grep.IO.Writer;
+import bg.sofia.uni.fmi.mjt.grep.IO.Reader;
 import bg.sofia.uni.fmi.mjt.grep.constants.RegexGroups;
-import bg.sofia.uni.fmi.mjt.grep.validation.Regex;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.stream.Stream;
 
 public class CommandExecutor {
 
-    private static boolean checkIfStringIsContained(String line, String word, String type) {
+    public void execute(Matcher matcher) {
 
-        switch (type) {
+        try (Stream<Path> paths =
+                     Files.walk(Paths.get(matcher.group(RegexGroups.PATH_TO_DIRECTORY_TREE)))) {
 
-            case "-w":
-                return line.matches("^.*\\b(" + word + ")\\b.*$");
-            case "-i":
-                return line.toLowerCase().contains(word.toLowerCase());
-            case "-w-i":
-            case "-i-w":
-                return line.toLowerCase().matches("^.*\\b(" + word.toLowerCase() + ")\\b.*$");
+            List<Reader> threads = new ArrayList<>();
 
-            default:
-                return line.contains(word);
+            for (Object entry :
+                    paths.toArray()) {
+
+                File file = new File(entry.toString());
+
+                threads.add(new Reader(file, matcher));
+            }
+
+            int numberOfThreads = Integer.parseInt(matcher.group(RegexGroups.NUMBER_OF_THREADS));
+
+            for (int i = 0; i < threads.size() / numberOfThreads; i += numberOfThreads) {
+
+                for (int j = i; j < numberOfThreads + i; j++) {
+                    if (threads.get(j) != null) {
+                        threads.get(j).run();
+                    }
+                }
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Invalid directory: " + RegexGroups.PATH_TO_DIRECTORY_TREE);
         }
     }
-
-
-    public void execute(String line, Regex regex, String path, int lineCount) throws IOException {
-
-        boolean wordIsContained = checkIfStringIsContained(
-                line,
-                regex.getMatcherGroupById(RegexGroups.STRING_TO_FIND),
-                regex.getMatcherGroupById(RegexGroups.PARAMETERS));
-
-        if (wordIsContained) {
-
-            String output = path
-                    .substring(regex.getMatcherGroupById(RegexGroups.PATH_TO_DIRECTORY_TREE).length() + 1)
-                    + ":" + lineCount + ":" + line + "\n";
-
-            Writer writer = new Writer();
-            writer.write(output, regex);
-
-        }
-
-    }
-
 
 }

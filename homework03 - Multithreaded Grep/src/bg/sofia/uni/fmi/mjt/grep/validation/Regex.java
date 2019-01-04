@@ -5,20 +5,9 @@ import java.util.regex.Pattern;
 
 public class Regex {
 
-    private Pattern pattern;
-    private Matcher matcher;
+    public static Matcher validateInput(String command) {
+        Pattern pattern = Pattern.compile("^grep\\s*([-w]*[-i]*)\\s(\\w+)\\s(.+)\\s(\\d+)\\s*(.*)$");
 
-    public Regex() {
-        pattern = Pattern.compile("^grep\\s*([-w]*[-i]*)\\s(\\w+)\\s(.+)\\s(\\d+)\\s*(.*)$");
+        return pattern.matcher(command);
     }
-
-    public boolean validateInput(String command) {
-        matcher = pattern.matcher(command);
-        return matcher.matches();
-    }
-
-    public String getMatcherGroupById(int id) {
-        return matcher.group(id);
-    }
-
 }

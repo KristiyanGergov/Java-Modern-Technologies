@@ -1,56 +1,76 @@
 package bg.sofia.uni.fmi.mjt.grep.IO;
 
 import bg.sofia.uni.fmi.mjt.grep.constants.RegexGroups;
-import bg.sofia.uni.fmi.mjt.grep.utility.CommandExecutor;
-import bg.sofia.uni.fmi.mjt.grep.validation.Regex;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.stream.Stream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.regex.Matcher;
 
-public class Reader {
+public class Reader extends Thread {
 
-    public String readLineFromConsole() throws IOException {
-        try (BufferedReader reader =
-                     new BufferedReader(new InputStreamReader(System.in))) {
-            return reader.readLine();
+    private File file;
+    private Matcher matcher;
+
+    public Reader(File file, Matcher matcher) {
+        this.file = file;
+        this.matcher = matcher;
+    }
+
+    private static boolean checkIfStringIsContained(String line, String word, String type) {
+
+        switch (type) {
+
+            case "-w":
+                return line.matches("^.*\\b(" + word + ")\\b.*$");
+            case "-i":
+                return line.toLowerCase().contains(word.toLowerCase());
+            case "-w-i":
+            case "-i-w":
+                return line.toLowerCase().matches("^.*\\b(" + word.toLowerCase() + ")\\b.*$");
+
+            default:
+                return line.contains(word);
         }
     }
 
 
-    public void read(Regex regex) throws IOException {
+    @Override
+    public void run() {
 
-        int lineCount;
+        String line;
 
-        CommandExecutor executor = new CommandExecutor();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
 
-        try (Stream<Path> paths =
-                     Files.walk(Paths.get(regex.getMatcherGroupById(RegexGroups.PATH_TO_DIRECTORY_TREE)))) {
+            int lineCount = 1;
 
-            for (Object entry :
-                    paths.toArray()) {
+            while ((line = reader.readLine()) != null) {
 
-                File file = new File(entry.toString());
+                boolean wordIsContained = checkIfStringIsContained(
+                        line,
+                        matcher.group(RegexGroups.STRING_TO_FIND),
+                        matcher.group(RegexGroups.PARAMETERS));
 
-                try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                if (wordIsContained) {
 
-                    String line;
+                    String output = file.getAbsolutePath()
+                            .substring(matcher.group(RegexGroups.PATH_TO_DIRECTORY_TREE).length() + 1)
+                            + ":" + lineCount + ":" + line + "\n";
 
-                    lineCount = 1;
-
-                    while ((line = reader.readLine()) != null) {
-                        executor.execute(line, regex, entry.toString(), lineCount);
-                        lineCount++;
-                    }
-
-                } catch (IOException ignore) {
+                    Writer writer = new Writer();
+                    writer.write(output, matcher);
                 }
+
+                lineCount++;
             }
 
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Either invalid input file or output path file!");
         }
 
     }
+
 
 }
