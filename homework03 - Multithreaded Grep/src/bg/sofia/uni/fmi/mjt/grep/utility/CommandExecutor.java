@@ -28,8 +28,7 @@ public class CommandExecutor {
 
             for (Object entry :
                     paths.toArray()) {
-                File file = new File(entry.toString());
-                files.add(file);
+                files.add(new File(entry.toString()));
             }
 
             int numberOfThreads = Integer.parseInt(matcher.group(RegexGroups.NUMBER_OF_THREADS));

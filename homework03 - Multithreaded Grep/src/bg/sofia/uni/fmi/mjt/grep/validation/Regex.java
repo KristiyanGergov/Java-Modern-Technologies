@@ -10,4 +10,21 @@ public class Regex {
 
         return pattern.matcher(command);
     }
+
+    public static boolean checkIfStringIsContained(String line, String word, String type) {
+
+        switch (type) {
+
+            case "-w":
+                return line.matches("^.*\\b(" + word + ")\\b.*$");
+            case "-i":
+                return line.toLowerCase().contains(word.toLowerCase());
+            case "-w-i":
+            case "-i-w":
+                return line.toLowerCase().matches("^.*\\b(" + word.toLowerCase() + ")\\b.*$");
+
+            default:
+                return line.contains(word);
+        }
+    }
 }
