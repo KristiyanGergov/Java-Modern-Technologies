@@ -49,13 +49,13 @@ public class GrepTest {
     public void testDifferentCasesForDifferentParameters() throws IOException {
 
 //        regex.validateInput(commands.get(0));
-//        reader.read(regex);
+//        reader.readFile(regex);
 //
 //        regex.validateInput(commands.get(1));
-//        reader.read(regex);
+//        reader.readFile(regex);
 //
 //        regex.validateInput(commands.get(2));
-//        reader.read(regex);
+//        reader.readFile(regex);
 //
 //        List<String> lines = new ArrayList<>();
 //

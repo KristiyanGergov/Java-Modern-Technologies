@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
 
-public class Reader extends Thread {
+public class Reader {
 
     private File file;
     private Matcher matcher;
@@ -36,8 +36,7 @@ public class Reader extends Thread {
     }
 
 
-    @Override
-    public void run() {
+    public void readFile() {
 
         String line;
 
@@ -66,7 +65,7 @@ public class Reader extends Thread {
             }
 
         } catch (IOException ignore) {
-            //Ignore it because it is a file that cannot be read
+            //Ignore it because it is a file that cannot be readFile
         }
 
     }
