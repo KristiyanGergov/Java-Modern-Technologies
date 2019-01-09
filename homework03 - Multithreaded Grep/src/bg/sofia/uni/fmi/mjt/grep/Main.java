@@ -1,7 +1,7 @@
 package bg.sofia.uni.fmi.mjt.grep;
 
 import bg.sofia.uni.fmi.mjt.grep.utility.CommandExecutor;
-import bg.sofia.uni.fmi.mjt.grep.validation.Regex;
+import bg.sofia.uni.fmi.mjt.grep.validation.InputHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,7 +17,7 @@ public class Main {
             //noinspection InfiniteLoopStatement
             while (true) {
 
-                Matcher matcher = Regex.validateInput(reader.readLine());
+                Matcher matcher = InputHandler.validateCommand(reader.readLine());
 
                 if (matcher.matches())
                     CommandExecutor.execute(matcher);
