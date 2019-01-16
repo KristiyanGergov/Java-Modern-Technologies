@@ -1,7 +1,7 @@
 package bg.sofia.uni.fmi.mjt.grep.IO;
 
 import bg.sofia.uni.fmi.mjt.grep.constants.RegexGroups;
-import bg.sofia.uni.fmi.mjt.grep.validation.Regex;
+import bg.sofia.uni.fmi.mjt.grep.validation.InputHandler;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,7 +19,7 @@ public class Reader {
         this.matcher = matcher;
     }
 
-    public void readFile() {
+    public boolean readFile() {
 
         String line;
 
@@ -29,7 +29,7 @@ public class Reader {
 
             while ((line = reader.readLine()) != null) {
 
-                boolean wordIsContained = Regex.checkIfStringIsContained(
+                boolean wordIsContained = InputHandler.wordIsContained(
                         line,
                         matcher.group(RegexGroups.STRING_TO_FIND),
                         matcher.group(RegexGroups.PARAMETERS));
@@ -40,15 +40,17 @@ public class Reader {
                             .substring(matcher.group(RegexGroups.PATH_TO_DIRECTORY_TREE).length() + 1)
                             + ":" + lineCount + ":" + line + "\n";
 
-                    Writer writer = new Writer();
+                    Writer writer = new Writer(true);
                     writer.write(output, matcher);
                 }
 
                 lineCount++;
             }
 
-        } catch (IOException ignore) {
-            //Ignore it because it is a file that cannot be readFile
+            return true;
+
+        } catch (IOException e) {
+            return false;
         }
 
     }

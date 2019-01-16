@@ -103,3 +103,13 @@ Test.txt:3:TEST
 Test.txt:1:tEst
 Test.txt:2:test
 Test.txt:3:TEST
+Test.txt:1:tEst
+Test.txt:2:test
+Test.txt:3:TEST
+Test.txt:1:tEst
+Test.txt:2:test
+Test.txt:3:TEST
+output.txt:1:test
+Test.txt:1:tEst
+Test.txt:2:test
+Test.txt:3:TEST
