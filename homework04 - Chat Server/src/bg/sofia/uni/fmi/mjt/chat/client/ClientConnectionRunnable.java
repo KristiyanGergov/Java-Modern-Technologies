@@ -1,4 +1,6 @@
-package bg.sofia.uni.fmi.mjt.chat;
+package bg.sofia.uni.fmi.mjt.chat.client;
+
+import bg.sofia.uni.fmi.mjt.chat.server.ChatServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,7 +9,9 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Set;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ClientConnectionRunnable implements Runnable {
 
@@ -17,6 +21,21 @@ public class ClientConnectionRunnable implements Runnable {
     public ClientConnectionRunnable(String username, Socket socket) {
         this.username = username;
         this.socket = socket;
+    }
+
+    private void sentMessage(Collection<Socket> sockets, String message) throws IOException {
+
+        for (Socket toSocket :
+                sockets) {
+
+            PrintWriter toWriter = new PrintWriter(toSocket.getOutputStream(), true);
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy kk:mm");
+            String date = dateFormat.format(Calendar.getInstance().getTime());
+
+            toWriter.println(String.format("=> [%s] [%s]: %s", date, username, message));
+        }
+
     }
 
     @Override
@@ -41,23 +60,28 @@ public class ClientConnectionRunnable implements Runnable {
                         }
 
                         System.out.println("inside");
-                        PrintWriter toWriter = new PrintWriter(toSocket.getOutputStream(), true);
-
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy kk:mm");
-                        String date = dateFormat.format(Calendar.getInstance().getTime());
-
-                        toWriter.println(String.format("=> [%s] [%s]: %s", date, username, message));
+                        List<Socket> socket = new LinkedList<>();
+                        socket.add(toSocket);
+                        sentMessage(socket, message);
                         System.out.println("successfully send message");
                     } else if ("disconnect".equals(command)) {
                         ChatServer.removeUser(username);
                     } else if ("list-users".equals(command)) {
-                        Set<User> users = ChatServer.getUsers();
-                        for (User user :
+
+                        var users = ChatServer.getUsers().entrySet();
+
+                        if (users.size() == 0) {
+                            writer.println("=> nobody is online");
+                            continue;
+                        }
+
+                        for (var user :
                                 users) {
-                            writer.println(String.format("=> %s, connect at %s", user.getName(), user.getConnectedAt()));
+                            writer.println(String.format("=> %s, connect at %s", user.getKey().getName(), user.getKey().getConnectedAt()));
                         }
                     } else if ("send-all".equals(command)) {
-                        System.out.println();
+                        String message = tokens[1];
+                        sentMessage(ChatServer.getUsers().values(), message);
                     }
                 }
             }

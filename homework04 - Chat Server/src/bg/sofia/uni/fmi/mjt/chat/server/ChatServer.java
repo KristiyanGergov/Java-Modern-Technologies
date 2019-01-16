@@ -1,4 +1,7 @@
-package bg.sofia.uni.fmi.mjt.chat;
+package bg.sofia.uni.fmi.mjt.chat.server;
+
+import bg.sofia.uni.fmi.mjt.chat.models.User;
+import bg.sofia.uni.fmi.mjt.chat.client.ClientConnectionRunnable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,7 +11,6 @@ import java.net.Socket;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class ChatServer {
 
@@ -17,15 +19,15 @@ public class ChatServer {
     private static Map<User, Socket> users = new HashMap<>();
 
     public static Socket getUser(String username) {
-        return users.get(username);
+        return users.get(new User(username));
     }
 
     public static void removeUser(String username) {
-        users.remove(username);
+        users.remove(new User(username));
     }
 
-    public static Set<User> getUsers() {
-        return users.keySet();
+    public static Map<User, Socket> getUsers() {
+        return users;
     }
 
     public static void main(String[] args) {
@@ -38,8 +40,7 @@ public class ChatServer {
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String username = reader.readLine();
-                User user = new User(username, new Date());
-                users.put(user, socket);
+                users.put(new User(username, new Date()), socket);
                 System.out.println(username + " connected");
 
                 ClientConnectionRunnable runnable = new ClientConnectionRunnable(username, socket);

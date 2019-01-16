@@ -1,4 +1,4 @@
-package bg.sofia.uni.fmi.mjt.chat;
+package bg.sofia.uni.fmi.mjt.chat.models;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,6 +7,10 @@ public class User {
 
     private String name;
     private Date connectedAt;
+
+    public User(String name) {
+        this.name = name;
+    }
 
     public User(String name, Date connectedAt) {
         this.name = name;
@@ -23,7 +27,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return name.hashCode() & 32;
     }
 
     @Override

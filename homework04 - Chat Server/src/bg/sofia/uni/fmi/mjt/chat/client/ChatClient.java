@@ -1,4 +1,4 @@
-package bg.sofia.uni.fmi.mjt.chat;
+package bg.sofia.uni.fmi.mjt.chat.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ public class ChatClient {
     private BufferedReader reader;
     private PrintWriter writer;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         new ChatClient().run();
     }
 
