@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class ChatServer {
 
-    private static int PORT = 8080;
+    private final static int PORT = 8080;
 
     private static Map<User, Socket> users = new HashMap<>();
 

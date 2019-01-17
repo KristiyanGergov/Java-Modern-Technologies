@@ -59,7 +59,7 @@ public class ClientConnectionRunnable implements Runnable {
                         System.out.println(command);
                         if ("send".equals(command)) {
                             String to = matcher.group(2);
-                            String message = matcher.group(3);
+                            String message = matcher.group(2 + 1);
 
                             Socket toSocket = ChatServer.getUser(to);
                             if (toSocket == null) {
@@ -84,7 +84,9 @@ public class ClientConnectionRunnable implements Runnable {
 
                             for (var user :
                                     users) {
-                                writer.println(String.format("=> %s, connect at %s", user.getKey().getName(), user.getKey().getConnectedAt()));
+                                writer.println(String.format("=> %s, connect at %s",
+                                        user.getKey().getName(),
+                                        user.getKey().getConnectedAt()));
                             }
                         } else if ("send-all".equals(command)) {
                             String message = matcher.group(2);
