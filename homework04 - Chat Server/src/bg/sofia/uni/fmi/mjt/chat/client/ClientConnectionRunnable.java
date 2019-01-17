@@ -12,6 +12,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ClientConnectionRunnable implements Runnable {
 
@@ -43,45 +45,55 @@ public class ClientConnectionRunnable implements Runnable {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+
             while (true) {
                 String commandInput = reader.readLine();
 
                 if (commandInput != null) {
-                    String[] tokens = commandInput.split("\\s+");
-                    String command = tokens[0];
-                    System.out.println(command);
-                    if ("send".equals(command)) {
-                        String to = tokens[1];
-                        String message = tokens[2];
+                    Pattern pattern = Pattern.compile("^([A-Za-z-]*)\\s*(\\w*)\\s*([\\w\\s]*)$");
+                    Matcher matcher = pattern.matcher(commandInput);
 
-                        Socket toSocket = ChatServer.getUser(to);
-                        if (toSocket == null) {
-                            writer.println(String.format("=> %s seems to be offline", to));
+                    if (matcher.matches()) {
+
+                        String command = matcher.group(1);
+                        System.out.println(command);
+                        if ("send".equals(command)) {
+                            String to = matcher.group(2);
+                            String message = matcher.group(3);
+
+                            Socket toSocket = ChatServer.getUser(to);
+                            if (toSocket == null) {
+                                writer.println(String.format("=> %s seems to be offline", to));
+                            }
+
+                            System.out.println("inside");
+                            List<Socket> socket = new LinkedList<>();
+                            socket.add(toSocket);
+                            sentMessage(socket, message);
+                            System.out.println("successfully send message");
+                        } else if ("disconnect".equals(command)) {
+                            ChatServer.removeUser(username);
+                        } else if ("list-users".equals(command)) {
+
+                            var users = ChatServer.getUsers().entrySet();
+
+                            if (users.size() == 0) {
+                                writer.println("=> nobody is online");
+                                continue;
+                            }
+
+                            for (var user :
+                                    users) {
+                                writer.println(String.format("=> %s, connect at %s", user.getKey().getName(), user.getKey().getConnectedAt()));
+                            }
+                        } else if ("send-all".equals(command)) {
+                            String message = matcher.group(2);
+                            sentMessage(ChatServer.getUsers().values(), message);
+                        } else {
+                            writer.println(String.format("Invalid command \"%s\"", command));
                         }
-
-                        System.out.println("inside");
-                        List<Socket> socket = new LinkedList<>();
-                        socket.add(toSocket);
-                        sentMessage(socket, message);
-                        System.out.println("successfully send message");
-                    } else if ("disconnect".equals(command)) {
-                        ChatServer.removeUser(username);
-                    } else if ("list-users".equals(command)) {
-
-                        var users = ChatServer.getUsers().entrySet();
-
-                        if (users.size() == 0) {
-                            writer.println("=> nobody is online");
-                            continue;
-                        }
-
-                        for (var user :
-                                users) {
-                            writer.println(String.format("=> %s, connect at %s", user.getKey().getName(), user.getKey().getConnectedAt()));
-                        }
-                    } else if ("send-all".equals(command)) {
-                        String message = tokens[1];
-                        sentMessage(ChatServer.getUsers().values(), message);
+                    } else {
+                        writer.println("Invalid input");
                     }
                 }
             }
