@@ -1,5 +1,6 @@
 package bg.sofia.uni.fmi.mjt.chat.client;
 
+import bg.sofia.uni.fmi.mjt.chat.models.User;
 import bg.sofia.uni.fmi.mjt.chat.server.ChatServer;
 
 import java.io.BufferedReader;
@@ -17,11 +18,11 @@ import java.util.regex.Pattern;
 
 public class ClientConnectionRunnable implements Runnable {
 
-    private String username;
+    private User user;
     private Socket socket;
 
-    public ClientConnectionRunnable(String username, Socket socket) {
-        this.username = username;
+    public ClientConnectionRunnable(User user, Socket socket) {
+        this.user = user;
         this.socket = socket;
     }
 
@@ -35,7 +36,7 @@ public class ClientConnectionRunnable implements Runnable {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy kk:mm");
             String date = dateFormat.format(Calendar.getInstance().getTime());
 
-            toWriter.println(String.format("=> [%s] [%s]: %s", date, username, message));
+            toWriter.println(String.format("=> [%s] [%s]: %s", date, user.getName(), message));
         }
 
     }
@@ -72,7 +73,7 @@ public class ClientConnectionRunnable implements Runnable {
                             sentMessage(socket, message);
                             System.out.println("successfully send message");
                         } else if ("disconnect".equals(command)) {
-                            ChatServer.removeUser(username);
+                            ChatServer.removeUser(user);
                         } else if ("list-users".equals(command)) {
 
                             var users = ChatServer.getUsers().entrySet();

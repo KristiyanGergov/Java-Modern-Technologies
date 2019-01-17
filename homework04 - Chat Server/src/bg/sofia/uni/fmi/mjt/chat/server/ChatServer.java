@@ -18,12 +18,12 @@ public class ChatServer {
 
     private static Map<User, Socket> users = new HashMap<>();
 
-    public static Socket getUser(String username) {
-        return users.get(new User(username));
+    public static Socket getUser(String user) {
+        return users.get(new User(user));
     }
 
-    public static void removeUser(String username) {
-        users.remove(new User(username));
+    public static void removeUser(User user) {
+        users.remove(user);
     }
 
     public static Map<User, Socket> getUsers() {
@@ -40,10 +40,13 @@ public class ChatServer {
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 String username = reader.readLine();
-                users.put(new User(username, new Date()), socket);
+
+                User user = new User(username, new Date());
+
+                users.put(user, socket);
                 System.out.println(username + " connected");
 
-                ClientConnectionRunnable runnable = new ClientConnectionRunnable(username, socket);
+                ClientConnectionRunnable runnable = new ClientConnectionRunnable(user, socket);
                 new Thread(runnable).start();
             }
         } catch (IOException e) {
