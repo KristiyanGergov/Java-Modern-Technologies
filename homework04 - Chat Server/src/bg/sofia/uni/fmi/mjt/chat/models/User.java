@@ -10,11 +10,7 @@ public class User {
 
     public User(String name) {
         this.name = name;
-    }
-
-    public User(String name, Date connectedAt) {
-        this.name = name;
-        this.connectedAt = connectedAt;
+        this.connectedAt = new Date();
     }
 
     public String getName() {

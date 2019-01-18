@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+import static bg.sofia.uni.fmi.mjt.chat.constants.SystemOutConstants.SOCKET_CLOSET;
+
 public class ClientRunnable implements Runnable {
 
     private Socket socket;
 
-    public ClientRunnable(Socket socket) {
+    ClientRunnable(Socket socket) {
         this.socket = socket;
     }
 
@@ -19,7 +21,7 @@ public class ClientRunnable implements Runnable {
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             while (true) {
                 if (socket.isClosed()) {
-                    System.out.println("client socket is closed, stop waiting for server messages");
+                    System.out.println(SOCKET_CLOSET);
                     return;
                 }
 

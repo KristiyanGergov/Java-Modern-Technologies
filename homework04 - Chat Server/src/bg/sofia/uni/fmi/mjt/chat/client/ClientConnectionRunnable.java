@@ -9,6 +9,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import static bg.sofia.uni.fmi.mjt.chat.constants.SystemOutConstants.SOCKET_CLOSET;
+
 public class ClientConnectionRunnable implements Runnable {
 
     private User user;
@@ -30,12 +32,12 @@ public class ClientConnectionRunnable implements Runnable {
                 String commandInput = reader.readLine();
 
                 if (commandInput != null) {
-                    InputHandler.processCommand(commandInput, writer, user);
+                    new InputHandler().processServerCommand(commandInput, writer, user);
                 }
 
             }
         } catch (IOException e) {
-            System.out.println("socket is closed");
+            System.out.println(SOCKET_CLOSET);
             System.out.println(e.getMessage());
         }
     }

@@ -1,5 +1,9 @@
+import bg.sofia.uni.fmi.mjt.chat.IO.InputHandler;
+import bg.sofia.uni.fmi.mjt.chat.client.ChatClient;
 import bg.sofia.uni.fmi.mjt.chat.client.ClientConnectionRunnable;
 import bg.sofia.uni.fmi.mjt.chat.models.User;
+import bg.sofia.uni.fmi.mjt.chat.server.ChatServer;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
@@ -7,16 +11,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class ChatServerTest {
 
     @Mock
     private ClientConnectionRunnable connectionRunnable;
 
-    @Test
+    @Before
     public void init() {
-//        connectionRunnable = new ClientConnectionRunnable();
+
+        ChatServer.main(null);
+
     }
 
     @Test
@@ -39,6 +46,30 @@ public class ChatServerTest {
         assertEquals(hashUsers.get(user1), Integer.valueOf(2));
         assertEquals(hashUsers.get(user2), Integer.valueOf(1));
         assertEquals(hashUsers.get(user3), Integer.valueOf(2));
+    }
+
+
+    @Test
+    public void testConnectWorksForTheSpecificHostAndPort() {
+
+        final int wrongPort = 808;
+        final int correctPort = 8080;
+
+        assertFalse(ChatClient.connect("local", correctPort, "Pesho"));
+        assertFalse(ChatClient.connect("localhost", wrongPort, "Pesho"));
+
+        assertTrue(ChatClient.connect("localhost", correctPort, "Pesho"));
+    }
+
+
+    @Test
+    public void testProcessServerCommands() {
+
+        InputHandler inputHandler = mock(InputHandler.class);
+
+//        doNothing().when(inputHandler)
+//                .processServerCommand("send pesho ", null, new User("gosho", new Date()));
+
 
     }
 
