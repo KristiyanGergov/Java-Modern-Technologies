@@ -52,6 +52,5 @@ public class ChatServerTest {
 
         assertTrue(ChatClient.connect("localhost", correctPort, "Pesho"));
 
-
     }
 }

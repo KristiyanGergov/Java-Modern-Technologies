@@ -25,10 +25,11 @@ public class ClientConnectionRunnable implements Runnable {
     @Override
     public void run() {
         try {
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
 
-            while (true) {
+            while (!socket.isClosed()) {
                 String commandInput = reader.readLine();
 
                 if (commandInput != null) {
@@ -36,6 +37,7 @@ public class ClientConnectionRunnable implements Runnable {
                 }
 
             }
+
         } catch (IOException e) {
             System.out.println(SOCKET_CLOSET);
             System.out.println(e.getMessage());

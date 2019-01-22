@@ -23,6 +23,7 @@ public class ChatClient {
             return true;
         } catch (IOException e) {
             System.out.printf(CANNOT_CONNECT_TO_SERVER, host, port);
+            System.out.println(e.getMessage());
             return false;
         }
     }

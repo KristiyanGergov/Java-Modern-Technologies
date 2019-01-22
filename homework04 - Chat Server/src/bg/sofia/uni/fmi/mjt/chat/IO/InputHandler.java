@@ -1,6 +1,7 @@
 package bg.sofia.uni.fmi.mjt.chat.IO;
 
 import bg.sofia.uni.fmi.mjt.chat.client.ChatClient;
+import bg.sofia.uni.fmi.mjt.chat.exceptions.NotConnectedException;
 import bg.sofia.uni.fmi.mjt.chat.models.User;
 import bg.sofia.uni.fmi.mjt.chat.repositories.UserRepository;
 
@@ -15,9 +16,9 @@ import java.util.regex.Pattern;
 public class InputHandler {
 
     public static PrintWriter writer;
+    private static boolean connected;
 
-
-    public void processClientCommand() {
+    public void processClientCommand() throws NotConnectedException {
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
                 String input = scanner.nextLine();
@@ -31,10 +32,13 @@ public class InputHandler {
 
                     String username = tokens[2 + 1];
 
-                    ChatClient.connect(host, port, username);
+                    connected = ChatClient.connect(host, port, username);
 
                 } else if (writer != null) {
-                    writer.println(input);
+                    if (connected)
+                        writer.println(input);
+                    else
+                        throw new NotConnectedException("You need to connect to the server first!");
                 }
             }
         }
@@ -67,6 +71,7 @@ public class InputHandler {
                 System.out.println("successfully send message");
             } else if ("disconnect".equals(command)) {
                 UserRepository.removeUser(user);
+                writer.println("=> you are now disconnected");
             } else if ("list-users".equals(command)) {
 
                 var users = UserRepository.getUsers().entrySet();

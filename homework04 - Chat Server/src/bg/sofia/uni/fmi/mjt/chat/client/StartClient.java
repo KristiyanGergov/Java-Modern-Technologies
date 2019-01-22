@@ -1,6 +1,7 @@
 package bg.sofia.uni.fmi.mjt.chat.client;
 
 import bg.sofia.uni.fmi.mjt.chat.IO.InputHandler;
+import bg.sofia.uni.fmi.mjt.chat.exceptions.NotConnectedException;
 
 public class StartClient implements Runnable {
 
@@ -10,6 +11,10 @@ public class StartClient implements Runnable {
 
     @Override
     public void run() {
-        new InputHandler().processClientCommand();
+        try {
+            new InputHandler().processClientCommand();
+        } catch (NotConnectedException e) {
+            e.printStackTrace();
+        }
     }
 }
