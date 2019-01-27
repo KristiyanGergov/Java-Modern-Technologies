@@ -1,6 +1,6 @@
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
 import bg.sofia.uni.fmi.mjt.battleships.util.BoardCreator;
-import bg.sofia.uni.fmi.mjt.battleships.util.ShipMaker;
+import bg.sofia.uni.fmi.mjt.battleships.util.ShipCommander;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,13 +12,13 @@ import static org.junit.Assert.fail;
 public class BattleShipsTest {
 
     private BoardCreator boardCreator;
-    private ShipMaker shipMaker;
+    private ShipCommander shipCommander;
 
 
     @Before
     public void initialize() {
         this.boardCreator = new BoardCreator(ROWS, COLUMNS);
-        this.shipMaker = new ShipMaker(boardCreator.getBoard());
+        this.shipCommander = new ShipCommander(boardCreator.getBoard());
     }
 
     @Test
@@ -40,7 +40,7 @@ public class BattleShipsTest {
 
     @Test
     public void testAddVerticalShip() {
-        shipMaker.addShip(new Ship(3, 6, 1, 1));
+        shipCommander.addShip(new Ship('C', 'F', 1, 1));
 
         assertEquals(boardCreator.getBoard()[2][0], '*');
         assertEquals(boardCreator.getBoard()[3][0], '*');
@@ -52,12 +52,17 @@ public class BattleShipsTest {
 
     @Test
     public void testAddHorizontalShip() {
-        shipMaker.addShip(new Ship(1, 1, 3, 6));
+        shipCommander.addShip(new Ship('A', 'A', 3, 6));
 
         assertEquals(boardCreator.getBoard()[0][2], '*');
         assertEquals(boardCreator.getBoard()[0][3], '*');
         assertEquals(boardCreator.getBoard()[0][4], '*');
         assertEquals(boardCreator.getBoard()[0][5], '*');
+    }
+
+    @Test
+    public void testShotHitShip() {
+        fail();
     }
 
     @Test

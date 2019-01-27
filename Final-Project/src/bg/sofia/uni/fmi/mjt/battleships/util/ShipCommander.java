@@ -1,12 +1,13 @@
 package bg.sofia.uni.fmi.mjt.battleships.util;
 
+import bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants;
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
 
-public class ShipMaker {
+public class ShipCommander {
 
     private char[][] board;
 
-    public ShipMaker(char[][] board) {
+    public ShipCommander(char[][] board) {
         this.board = board;
     }
 
@@ -19,6 +20,11 @@ public class ShipMaker {
                 addHorizontalShip(ship.getStartCol(), ship.getEndCol(), ship.getStartRow());
         }
     }
+
+    public void hitShip(int x, int y) {
+        board[x][y] = BoardConstants.HIT_SHIP_FIELD;
+    }
+
 
     private void addVerticalShip(int startRow, int endRow, int col) {
         for (int row = startRow; row <= endRow; row++) {

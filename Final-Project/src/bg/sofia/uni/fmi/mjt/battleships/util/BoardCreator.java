@@ -9,10 +9,10 @@ public class BoardCreator {
     public BoardCreator(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
-        initializeBoard();
+        this.createBoard();
     }
 
-    private void initializeBoard() {
+    private void createBoard() {
 
         board = new char[rows][cols];
 

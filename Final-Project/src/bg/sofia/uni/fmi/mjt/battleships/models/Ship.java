@@ -3,6 +3,9 @@ package bg.sofia.uni.fmi.mjt.battleships.models;
 import bg.sofia.uni.fmi.mjt.battleships.enums.ShipType;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongShipCoordinatesException;
 
+import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.COLUMNS_CELLS;
+import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.ROWS_CELLS;
+
 public class Ship {
 
     private int startRow;
@@ -13,34 +16,34 @@ public class Ship {
     private ShipType type;
 
     public int getStartRow() {
-        return startRow - 1;
+        return startRow;
     }
 
     public int getEndRow() {
-        return endRow - 1;
+        return endRow;
     }
 
     public int getStartCol() {
-        return startCol - 1;
+        return startCol;
     }
 
     public int getEndCol() {
-        return endCol - 1;
+        return endCol;
     }
 
     public ShipType getType() {
         return type;
     }
 
-    public Ship(int startRow, int endRow, int startCol, int endCol) {
+    public Ship(char startRow, char endRow, int startCol, int endCol) {
         type = initializeShipType(startRow, endRow, startCol, endCol);
-        this.startRow = startRow;
-        this.startCol = startCol;
-        this.endCol = endCol;
-        this.endRow = endRow;
+        this.startRow = ROWS_CELLS.get(Character.toUpperCase(startRow));
+        this.endRow = ROWS_CELLS.get(Character.toUpperCase(endRow));
+        this.startCol = COLUMNS_CELLS.get(startCol);
+        this.endCol = COLUMNS_CELLS.get(endCol);
     }
 
-    private ShipType initializeShipType(int startRow, int endRow, int startCol, int endCol) {
+    private ShipType initializeShipType(char startRow, char endRow, int startCol, int endCol) {
 
         if (startRow == endRow)
             return ShipType.Horizontal;
