@@ -13,6 +13,4 @@ public class Board {
         this.boardCreator = new BoardCreator(ROWS, COLUMNS);
     }
 
-
-
 }

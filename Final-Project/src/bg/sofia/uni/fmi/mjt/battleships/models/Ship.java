@@ -13,6 +13,9 @@ public class Ship {
     private int startCol;
     private int endCol;
 
+    private int lives;
+    private boolean destroyed;
+
     private ShipType type;
 
     public int getStartRow() {
@@ -35,8 +38,17 @@ public class Ship {
         return type;
     }
 
+    public int getCellsNumber() {
+
+        if (startCol == endCol)
+            return endRow - startRow;
+        else
+            return endCol - startCol;
+    }
+
     public Ship(char startRow, char endRow, int startCol, int endCol) {
         type = initializeShipType(startRow, endRow, startCol, endCol);
+        this.destroyed = false;
         this.startRow = ROWS_CELLS.get(Character.toUpperCase(startRow));
         this.endRow = ROWS_CELLS.get(Character.toUpperCase(endRow));
         this.startCol = COLUMNS_CELLS.get(startCol);

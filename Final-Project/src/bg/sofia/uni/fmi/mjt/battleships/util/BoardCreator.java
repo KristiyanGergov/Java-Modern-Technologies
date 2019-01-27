@@ -19,7 +19,6 @@ public class BoardCreator {
         for (int i = 0; i < rows; i++)
             for (int j = 0; j < cols; j++)
                 board[i][j] = '-';
-
     }
 
     public char[][] getBoard() {
