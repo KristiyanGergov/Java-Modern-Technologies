@@ -3,15 +3,11 @@ package bg.sofia.uni.fmi.mjt.battleships.models;
 import bg.sofia.uni.fmi.mjt.battleships.enums.ShipOrientationType;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongShipCoordinatesException;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class Ship {
 
     private ShipCoordinates shipCoordinates;
-    private Set<Integer> cellsDestroyed;
-
     private ShipOrientationType type;
+    private int lives;
 
     public ShipCoordinates getShipCoordinates() {
         return shipCoordinates;
@@ -22,9 +18,13 @@ public class Ship {
     }
 
     public Ship(char startRow, char endRow, int startCol, int endCol) {
-        type = initializeShipType(startRow, endRow, startCol, endCol);
-        this.cellsDestroyed = new HashSet<>();
+        this.type = initializeShipType(startRow, endRow, startCol, endCol);
         this.shipCoordinates = new ShipCoordinates(startRow, endRow, startCol, endCol);
+        this.lives = shipCoordinates.getCellsNumber();
+    }
+
+    public boolean destroyedAfterHit() {
+        return lives-- == 0;
     }
 
     private ShipOrientationType initializeShipType(char startRow, char endRow, int startCol, int endCol) {

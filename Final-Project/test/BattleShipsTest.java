@@ -9,14 +9,15 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.Set;
+
 import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.COLUMNS;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.DEFAULT_BOARD_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.ROWS;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.HitConstants.HIT_EMPTY_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.HitConstants.HIT_SHIP_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants.SHIP_FIELD;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class BattleShipsTest {
 
@@ -134,9 +135,9 @@ public class BattleShipsTest {
         char[][] board = boardCreator.getBoard();
         Gun gun = new Gun(board);
 
-        gun.makeHit(hit1);
-        gun.makeHit(hit2);
-        gun.makeHit(hit3);
+        assertTrue(gun.hitShip(hit1));
+        assertTrue(gun.hitShip(hit2));
+        assertTrue(gun.hitShip(hit3));
 
         assertEquals(board[hit1.getRow()][hit1.getCol()], HIT_SHIP_FIELD);
         assertEquals(board[hit2.getRow()][hit2.getCol()], HIT_SHIP_FIELD);
@@ -152,9 +153,9 @@ public class BattleShipsTest {
         char[][] board = boardCreator.getBoard();
         Gun gun = new Gun(board);
 
-        gun.makeHit(hit1);
-        gun.makeHit(hit2);
-        gun.makeHit(hit3);
+        assertFalse(gun.hitShip(hit1));
+        assertFalse(gun.hitShip(hit2));
+        assertFalse(gun.hitShip(hit3));
 
         assertEquals(board[hit1.getRow()][hit1.getCol()], HIT_EMPTY_FIELD);
         assertEquals(board[hit2.getRow()][hit2.getCol()], HIT_EMPTY_FIELD);
@@ -164,6 +165,7 @@ public class BattleShipsTest {
     @Test
     @Ignore
     public void testShotReturnsCorrectResult() {
+        Set<Ship> ships = ShipBuilder.getShips();
         fail();
     }
 

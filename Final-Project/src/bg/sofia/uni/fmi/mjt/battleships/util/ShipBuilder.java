@@ -6,6 +6,7 @@ import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants.*;
 
@@ -13,11 +14,11 @@ public class ShipBuilder {
 
     private char[][] board;
 
-    private Map<Ship, Integer> ships;
+    private static Map<Ship, Integer> ships;
 
     public ShipBuilder(char[][] board) {
         this.board = board;
-        this.ships = new HashMap<>();
+        ships = new HashMap<>();
     }
 
     private boolean areMaximumShipsReached(Collection<Integer> cellsNumber, int maximumShips, int shipCell) {
@@ -88,4 +89,7 @@ public class ShipBuilder {
         }
     }
 
+    public static Set<Ship> getShips() {
+        return ships.keySet();
+    }
 }
