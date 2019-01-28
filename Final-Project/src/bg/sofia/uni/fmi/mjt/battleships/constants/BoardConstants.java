@@ -8,9 +8,7 @@ public class BoardConstants {
 
     public final static int COLUMNS = 10;
 
-    public final static char HIT_SHIP_FIELD = 'X';
-
-    public final static char HIT_EMPTY_FIELD = 'O';
+    public final static char DEFAULT_BOARD_FIELD = '_';
 
     public final static Map<Character, Integer> ROWS_CELLS = Map.of(
             'A', 0,

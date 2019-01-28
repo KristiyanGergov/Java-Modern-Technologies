@@ -10,4 +10,7 @@ public class ShipConstants {
 
     public static final int FOUR_SHIPS_CELLS = 2;
 
+    public static final char SHIP_FIELD = '*';
+
+
 }

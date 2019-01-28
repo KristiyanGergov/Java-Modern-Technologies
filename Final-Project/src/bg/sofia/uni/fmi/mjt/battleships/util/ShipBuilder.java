@@ -1,20 +1,21 @@
 package bg.sofia.uni.fmi.mjt.battleships.util;
 
-import bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.ExceededNumberOfShipsException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants.*;
 
-public class ShipCommander {
+public class ShipBuilder {
 
     private char[][] board;
 
     private Map<Ship, Integer> ships;
 
-    public ShipCommander(char[][] board) {
+    public ShipBuilder(char[][] board) {
         this.board = board;
         this.ships = new HashMap<>();
     }
@@ -52,37 +53,38 @@ public class ShipCommander {
         return true;
     }
 
-    public void addShip(Ship ship) throws ExceededNumberOfShipsException {
+    public void buildShip(Ship ship) throws ExceededNumberOfShipsException {
 
-        int shipCells = ship.getCellsNumber();
+        int shipCells = ship.getShipCoordinates().getCellsNumber();
 
         if (!checkIfShipCanBeAdded(shipCells))
             throw new ExceededNumberOfShipsException(
                     String.format("Reached the maximum ships with %d cells!", shipCells));
 
-        ships.put(ship, ship.getCellsNumber());
+        ships.put(ship, ship.getShipCoordinates().getCellsNumber());
+
+        int startRow = ship.getShipCoordinates().getStartRow();
+        int endRow = ship.getShipCoordinates().getEndRow();
+        int startCol = ship.getShipCoordinates().getStartCol();
+        int endCol = ship.getShipCoordinates().getEndCol();
 
         switch (ship.getType()) {
             case Vertical:
-                addVerticalShip(ship.getStartRow(), ship.getEndRow(), ship.getStartCol());
+                buildVerticalShip(startRow, endRow, startCol);
             case Horizontal:
-                addHorizontalShip(ship.getStartCol(), ship.getEndCol(), ship.getStartRow());
+                buildHorizontalShip(startCol, endCol, startRow);
         }
     }
 
-    public void hitShip(int x, int y) {
-        board[x][y] = BoardConstants.HIT_SHIP_FIELD;
-    }
-
-    private void addVerticalShip(int startRow, int endRow, int col) {
+    private void buildVerticalShip(int startRow, int endRow, int col) {
         for (int row = startRow; row <= endRow; row++) {
-            board[row][col] = '*';
+            board[row][col] = SHIP_FIELD;
         }
     }
 
-    private void addHorizontalShip(int startCol, int endCol, int row) {
+    private void buildHorizontalShip(int startCol, int endCol, int row) {
         for (int col = startCol; col <= endCol; col++) {
-            board[row][col] = '*';
+            board[row][col] = SHIP_FIELD;
         }
     }
 
