@@ -1,7 +1,6 @@
 package bg.sofia.uni.fmi.mjt.battleships.util;
 
 import bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants;
-import bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.ExceededNumberOfShipsException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
 
@@ -20,28 +19,34 @@ public class ShipCommander {
         this.ships = new HashMap<>();
     }
 
+    private boolean areMaximumShipsReached(Collection<Integer> cellsNumber, int maximumShips, int shipCell) {
+
+        int counter = 0;
+        for (int cell : cellsNumber) {
+
+            if (cell == shipCell)
+                counter++;
+
+            if (counter >= maximumShips)
+                return false;
+        }
+        return true;
+    }
+
     private boolean checkIfShipCanBeAdded(int shipCells) {
 
         Collection<Integer> cellsNumber = ships.values();
 
         switch (shipCells) {
 
-            case FIVE_CELLS_SHIPS:
-                if (cellsNumber.contains(FIVE_CELLS_SHIPS))
-                    return false;
-                break;
-            case ShipConstants.FOUR_CELLS_SHIPS:
-                if (cellsNumber.containsAll(List.of(FOUR_CELLS_SHIPS, FOUR_CELLS_SHIPS)))
-                    return false;
-                break;
-            case ShipConstants.THREE_CELLS_SHIPS:
-                if (cellsNumber.containsAll(List.of(THREE_CELLS_SHIPS, THREE_CELLS_SHIPS, THREE_CELLS_SHIPS)))
-                    return false;
-                break;
-            case ShipConstants.TWO_CELLS_SHIPS:
-                if (cellsNumber.containsAll(List.of(TWO_CELLS_SHIPS, TWO_CELLS_SHIPS, TWO_CELLS_SHIPS, TWO_CELLS_SHIPS)))
-                    return false;
-                break;
+            case ONE_SHIP_CELLS:
+                return areMaximumShipsReached(cellsNumber, 1, ONE_SHIP_CELLS);
+            case TWO_SHIPS_CELLS:
+                return areMaximumShipsReached(cellsNumber, 2, TWO_SHIPS_CELLS);
+            case THREE_SHIPS_CELLS:
+                return areMaximumShipsReached(cellsNumber, 3, THREE_SHIPS_CELLS);
+            case FOUR_SHIPS_CELLS:
+                return areMaximumShipsReached(cellsNumber, 4, FOUR_SHIPS_CELLS);
         }
 
         return true;

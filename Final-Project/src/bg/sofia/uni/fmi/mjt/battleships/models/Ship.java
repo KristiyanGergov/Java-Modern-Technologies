@@ -1,6 +1,6 @@
 package bg.sofia.uni.fmi.mjt.battleships.models;
 
-import bg.sofia.uni.fmi.mjt.battleships.enums.ShipType;
+import bg.sofia.uni.fmi.mjt.battleships.enums.ShipOrientationType;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongShipCoordinatesException;
 
 import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.COLUMNS_CELLS;
@@ -16,7 +16,7 @@ public class Ship {
     private int lives;
     private boolean destroyed;
 
-    private ShipType type;
+    private ShipOrientationType type;
 
     public int getStartRow() {
         return startRow;
@@ -34,16 +34,16 @@ public class Ship {
         return endCol;
     }
 
-    public ShipType getType() {
+    public ShipOrientationType getType() {
         return type;
     }
 
     public int getCellsNumber() {
 
         if (startCol == endCol)
-            return endRow - startRow;
+            return endRow - startRow + 1;
         else
-            return endCol - startCol;
+            return endCol - startCol + 1;
     }
 
     public Ship(char startRow, char endRow, int startCol, int endCol) {
@@ -55,12 +55,12 @@ public class Ship {
         this.endCol = COLUMNS_CELLS.get(endCol);
     }
 
-    private ShipType initializeShipType(char startRow, char endRow, int startCol, int endCol) {
+    private ShipOrientationType initializeShipType(char startRow, char endRow, int startCol, int endCol) {
 
         if (startRow == endRow)
-            return ShipType.Horizontal;
+            return ShipOrientationType.Horizontal;
         else if (startCol == endCol)
-            return ShipType.Vertical;
+            return ShipOrientationType.Vertical;
 
         throw new WrongShipCoordinatesException("Ship must be either horizontal or vertical! Please check the coordinates provided.");
 

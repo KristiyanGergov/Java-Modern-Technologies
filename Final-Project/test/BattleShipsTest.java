@@ -64,45 +64,55 @@ public class BattleShipsTest {
 
 
     @Test
-    public void testAddingMoreShipsThanAllowedThrowsException() {
+    public void testAddingMoreShipsThanAllowedThrowsException() throws ExceededNumberOfShipsException {
 
         //T W O   C E L L S
+        shipCommander.addShip(new Ship('A', 'A', 9, 10));
+        shipCommander.addShip(new Ship('A', 'A', 2, 3));
+        shipCommander.addShip(new Ship('A', 'A', 3, 4));
+        shipCommander.addShip(new Ship('A', 'A', 5, 6));
+
         try {
-            shipCommander.addShip(new Ship('A', 'A', 9, 10));
-            shipCommander.addShip(new Ship('A', 'A', 2, 3));
-            shipCommander.addShip(new Ship('A', 'A', 3, 4));
-            shipCommander.addShip(new Ship('A', 'A', 5, 6));
             shipCommander.addShip(new Ship('A', 'A', 7, 8));
             fail();
-
-        } catch (ExceededNumberOfShipsException ignore) { }
+        } catch (ExceededNumberOfShipsException ignore) {
+        }
 
         //T H R E E   C E L L S
+
+        shipCommander.addShip(new Ship('A', 'A', 1, 3));
+        shipCommander.addShip(new Ship('A', 'A', 4, 6));
+        shipCommander.addShip(new Ship('A', 'A', 7, 9));
+
         try {
-            shipCommander.addShip(new Ship('A', 'A', 1, 3));
-            shipCommander.addShip(new Ship('A', 'A', 4, 6));
-            shipCommander.addShip(new Ship('A', 'A', 7, 9));
             shipCommander.addShip(new Ship('B', 'D', 10, 10));
             fail();
 
-        } catch (ExceededNumberOfShipsException ignore) { }
+        } catch (ExceededNumberOfShipsException ignore) {
+        }
 
         //F O U R   C E L L S
+
+        shipCommander.addShip(new Ship('A', 'A', 1, 4));
+        shipCommander.addShip(new Ship('A', 'A', 5, 8));
+
         try {
-            shipCommander.addShip(new Ship('A', 'A', 1, 4));
-            shipCommander.addShip(new Ship('A', 'A', 5, 8));
             shipCommander.addShip(new Ship('B', 'E', 9, 9));
             fail();
 
-        } catch (ExceededNumberOfShipsException ignore) { }
+        } catch (ExceededNumberOfShipsException ignore) {
+        }
 
         //F I V E   C E L L S
+
+        shipCommander.addShip(new Ship('A', 'A', 1, 5));
+
         try {
-            shipCommander.addShip(new Ship('A', 'A', 1, 5));
             shipCommander.addShip(new Ship('A', 'A', 6, 10));
             fail();
 
-        } catch (ExceededNumberOfShipsException ignore) { }
+        } catch (ExceededNumberOfShipsException ignore) {
+        }
 
     }
 

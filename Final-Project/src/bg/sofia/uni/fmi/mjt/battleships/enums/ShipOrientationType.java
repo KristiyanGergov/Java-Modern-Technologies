@@ -1,6 +1,6 @@
 package bg.sofia.uni.fmi.mjt.battleships.enums;
 
-public enum ShipType {
+public enum ShipOrientationType {
     Horizontal,
     Vertical
 }
