@@ -23,8 +23,12 @@ public class Ship {
         this.lives = shipCoordinates.getCellsNumber();
     }
 
-    public boolean destroyedAfterHit() {
-        return lives-- == 0;
+    public void hit() {
+        this.lives--;
+    }
+
+    public boolean destroyed() {
+        return lives == 0;
     }
 
     private ShipOrientationType initializeShipType(char startRow, char endRow, int startCol, int endCol) {

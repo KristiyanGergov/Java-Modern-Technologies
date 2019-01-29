@@ -1,6 +1,7 @@
 package bg.sofia.uni.fmi.mjt.battleships.util;
 
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongHitCoordinatesException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongShipCoordinatesException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Hit;
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
 
@@ -17,7 +18,7 @@ public class Gun {
         this.board = board;
     }
 
-    private boolean shipDestoryed(Hit hit) {
+    private Ship findShipToHit(Hit hit) {
 
         final int row = hit.getRow();
         final int col = hit.getCol();
@@ -30,16 +31,16 @@ public class Gun {
                     if (ship.getShipCoordinates().getStartCol() == col &&
                             ship.getShipCoordinates().getStartRow() <= row &&
                             ship.getShipCoordinates().getEndRow() >= row)
-                        return ship.destroyedAfterHit();
+                        return ship;
                 case Horizontal:
                     if (ship.getShipCoordinates().getStartRow() == row &&
                             ship.getShipCoordinates().getStartCol() <= col &&
                             ship.getShipCoordinates().getEndCol() >= col)
-                        return ship.destroyedAfterHit();
+                        return ship;
             }
         }
 
-        return false;
+        throw new WrongShipCoordinatesException("There is no ship at this coordinates!");
     }
 
     public boolean hitShip(Hit hit) throws WrongHitCoordinatesException {
@@ -50,6 +51,7 @@ public class Gun {
         final char current = board[row][col];
 
         if (current == SHIP_FIELD) {
+            findShipToHit(hit).hit();
             board[row][col] = HIT_SHIP_FIELD;
             return true;
         } else if (current == DEFAULT_BOARD_FIELD) {

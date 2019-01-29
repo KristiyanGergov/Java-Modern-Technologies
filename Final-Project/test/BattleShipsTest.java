@@ -9,11 +9,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.Set;
-
-import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.COLUMNS;
-import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.DEFAULT_BOARD_FIELD;
-import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.ROWS;
+import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.*;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.HitConstants.HIT_EMPTY_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.HitConstants.HIT_SHIP_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants.SHIP_FIELD;
@@ -23,12 +19,13 @@ public class BattleShipsTest {
 
     private BoardCreator boardCreator;
     private ShipBuilder shipBuilder;
-
+    private Gun gun;
 
     @Before
     public void initialize() {
         this.boardCreator = new BoardCreator(ROWS, COLUMNS);
         this.shipBuilder = new ShipBuilder(boardCreator.getBoard());
+        this.gun = new Gun(boardCreator.getBoard());
     }
 
     @Test
@@ -133,7 +130,6 @@ public class BattleShipsTest {
         Hit hit3 = new Hit('A', 3);
 
         char[][] board = boardCreator.getBoard();
-        Gun gun = new Gun(board);
 
         assertTrue(gun.hitShip(hit1));
         assertTrue(gun.hitShip(hit2));
@@ -145,13 +141,23 @@ public class BattleShipsTest {
     }
 
     @Test
+    public void testShotOnAlreadyShotFieldThrowsException() {
+        try {
+            gun.hitShip(new Hit('a', 1));
+            gun.hitShip(new Hit('a', 1));
+            fail();
+        } catch (WrongHitCoordinatesException ignore) {
+        }
+    }
+
+    @Test
     public void testShotHitEmptyField() throws WrongHitCoordinatesException {
+
         Hit hit1 = new Hit('A', 1);
         Hit hit2 = new Hit('A', 2);
         Hit hit3 = new Hit('A', 3);
 
         char[][] board = boardCreator.getBoard();
-        Gun gun = new Gun(board);
 
         assertFalse(gun.hitShip(hit1));
         assertFalse(gun.hitShip(hit2));
@@ -163,10 +169,15 @@ public class BattleShipsTest {
     }
 
     @Test
-    @Ignore
-    public void testShotReturnsCorrectResult() {
-        Set<Ship> ships = ShipBuilder.getShips();
-        fail();
+    public void testShotReturnsCorrectResult() throws WrongHitCoordinatesException, ExceededNumberOfShipsException {
+        shipBuilder.buildShip(new Ship('C', 'C', 3, 5));
+
+        assertTrue(gun.hitShip(new Hit('C', 3)));
+        assertTrue(gun.hitShip(new Hit('C', 4)));
+        assertFalse(((Ship) ShipBuilder.getShips().toArray()[0]).destroyed());
+        assertTrue(gun.hitShip(new Hit('C', 5)));
+
+        assertTrue(((Ship) ShipBuilder.getShips().toArray()[0]).destroyed());
     }
 
     @Test
