@@ -2,6 +2,7 @@ package bg.sofia.uni.fmi.mjt.battleships.util;
 
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.ExceededNumberOfShipsException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
+import bg.sofia.uni.fmi.mjt.battleships.models.ShipCoordinates;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -56,18 +57,20 @@ public class ShipBuilder {
 
     public void buildShip(Ship ship) throws ExceededNumberOfShipsException {
 
-        int shipCells = ship.getShipCoordinates().getCellsNumber();
+        final ShipCoordinates coordinates = ship.getShipCoordinates();
+
+        int shipCells = coordinates.getCellsNumber();
 
         if (!checkIfShipCanBeAdded(shipCells))
             throw new ExceededNumberOfShipsException(
                     String.format("Reached the maximum ships with %d cells!", shipCells));
 
-        ships.put(ship, ship.getShipCoordinates().getCellsNumber());
+        ships.put(ship, coordinates.getCellsNumber());
 
-        int startRow = ship.getShipCoordinates().getStartRow();
-        int endRow = ship.getShipCoordinates().getEndRow();
-        int startCol = ship.getShipCoordinates().getStartCol();
-        int endCol = ship.getShipCoordinates().getEndCol();
+        int startRow = coordinates.getStartRow();
+        int endRow = coordinates.getEndRow();
+        int startCol = coordinates.getStartCol();
+        int endCol = coordinates.getEndCol();
 
         switch (ship.getType()) {
             case Vertical:

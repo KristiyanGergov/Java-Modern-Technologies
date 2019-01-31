@@ -10,6 +10,14 @@ public class BoardConstants {
 
     public final static char DEFAULT_BOARD_FIELD = '_';
 
+    public final static char START_ROW = 'A';
+
+    public final static char END_ROW = 'J';
+
+    public final static int START_COL = 1;
+
+    public final static int END_COL = 10;
+
     public final static Map<Character, Integer> ROWS_CELLS = Map.of(
             'A', 0,
             'B', 1,

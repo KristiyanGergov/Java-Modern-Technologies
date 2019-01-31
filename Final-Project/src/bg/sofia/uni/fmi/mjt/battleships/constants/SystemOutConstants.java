@@ -7,13 +7,13 @@ public class SystemOutConstants {
 
     public static final String CLIENT_CONNECTED_TO_SERVER = "A client connected to server %s\n";
 
-    public static final String PORT_8080_TAKEN = "maybe another server is running or port 8080\n";
+    public static final String PORT_8080_TAKEN = "maybe another server is running on port 8080\n";
 
-    public static final String USER_CONNECTED = "%s connected\n";
+    public static final String PLAYER_CONNECTED = "%s connected\n";
 
 
     // C H A T    C L I E N T
-    public static final String SUCCESSFULLY_CONNECTED = "=> connected to server running on %s:%s as %s\n";
+    public static final String SUCCESSFULLY_CONNECTED = "=> connected to server as %s\n";
 
     public static final String CANNOT_CONNECT_TO_SERVER =
             "=> cannot connect to server on %s:%s, make sure that the server is started\n";

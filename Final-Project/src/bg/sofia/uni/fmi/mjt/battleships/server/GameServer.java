@@ -1,41 +1,97 @@
 package bg.sofia.uni.fmi.mjt.battleships.server;
 
+import bg.sofia.uni.fmi.mjt.battleships.client.ClientConnectionRunnable;
 import bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants;
+import bg.sofia.uni.fmi.mjt.battleships.models.Player;
+import bg.sofia.uni.fmi.mjt.battleships.util.ThreadExecutor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
-public class GameServer {
+import static bg.sofia.uni.fmi.mjt.battleships.constants.ServerConstants.PORT;
+import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.PORT_8080_TAKEN;
 
-    private final static int PORT = 8080;
+public class GameServer implements Runnable {
+
+    private BufferedReader reader;
+    private Socket socket;
+
+    private Map<Player, Socket> players;
+    private Player currentPlayer;
+
+
+    public synchronized BufferedReader getReader() {
+        return reader;
+    }
+
+    public synchronized void addPlayer(Player player) {
+        players.put(player, socket);
+        this.currentPlayer = player;
+    }
+
+    public synchronized Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public synchronized Socket getSocket() {
+        return socket;
+    }
 
     private void processInput(ServerSocket serverSocket) throws IOException {
 
         while (true) {
 
-            Socket socket = serverSocket.accept();
+            socket = serverSocket.accept();
             System.out.printf(SystemOutConstants.CLIENT_CONNECTED_TO_SERVER, socket.getInetAddress());
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+            ServerRunnable serverRunnable = new ServerRunnable(this);
+            ThreadExecutor.execute(serverRunnable);
 
-
+            ClientConnectionRunnable clientRunnable = new ClientConnectionRunnable(this);
+            ThreadExecutor.execute(clientRunnable);
         }
     }
 
+    private ServerSocket startServer() {
 
-    private void startServer() {
-
-        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.printf(SystemOutConstants.SERVER_RUNNING, PORT);
-            processInput(serverSocket);
+            return serverSocket;
         } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(PORT_8080_TAKEN);
 
+            return null;
         }
 
     }
 
+    @Override
+    public void run() {
+        players = new HashMap<>();
+
+        try (ServerSocket serverSocket = startServer()) {
+
+            if (serverSocket != null)
+                processInput(serverSocket);
+            else
+                ThreadExecutor.shutdown();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            //todo
+        }
+    }
+
+    public static void main(String[] args) {
+        new GameServer().run();
+    }
 }

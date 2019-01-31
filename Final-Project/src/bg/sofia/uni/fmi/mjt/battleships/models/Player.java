@@ -12,11 +12,14 @@ public class Player {
     private Gun gun;
     private ShipBuilder shipBuilder;
 
-    public Player(String username, char[][] enemyBoard) {
+    public Player(String username) {
         this.username = username;
         this.boardCreator = new BoardCreator(BoardConstants.ROWS, BoardConstants.COLUMNS);
         this.shipBuilder = new ShipBuilder(boardCreator.getBoard());
     }
 
+    public String getUsername() {
+        return username;
+    }
 
 }

@@ -1,5 +1,6 @@
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.ExceededNumberOfShipsException;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongHitCoordinatesException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongShipCoordinatesException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Hit;
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
 import bg.sofia.uni.fmi.mjt.battleships.util.BoardCreator;
@@ -15,7 +16,7 @@ import static bg.sofia.uni.fmi.mjt.battleships.constants.HitConstants.HIT_SHIP_F
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants.SHIP_FIELD;
 import static org.junit.Assert.*;
 
-public class BattleShipsTest {
+public class BattleShipsLogicTest {
 
     private BoardCreator boardCreator;
     private ShipBuilder shipBuilder;
@@ -121,13 +122,13 @@ public class BattleShipsTest {
     }
 
     @Test
-    public void testShotHitShip() throws ExceededNumberOfShipsException, WrongHitCoordinatesException {
+    public void testShotHitShip() throws ExceededNumberOfShipsException, WrongHitCoordinatesException, WrongShipCoordinatesException {
 
         shipBuilder.buildShip(new Ship('A', 'A', 1, 3));
 
-        Hit hit1 = new Hit('A', 1);
-        Hit hit2 = new Hit('A', 2);
-        Hit hit3 = new Hit('A', 3);
+        Hit hit1 = new Hit("A1");
+        Hit hit2 = new Hit("A2");
+        Hit hit3 = new Hit("A3");
 
         char[][] board = boardCreator.getBoard();
 
@@ -141,21 +142,21 @@ public class BattleShipsTest {
     }
 
     @Test
-    public void testShotOnAlreadyShotFieldThrowsException() {
+    public void testShotOnAlreadyShotFieldThrowsException() throws WrongShipCoordinatesException {
         try {
-            gun.hitShip(new Hit('a', 1));
-            gun.hitShip(new Hit('a', 1));
+            gun.hitShip(new Hit("a1"));
+            gun.hitShip(new Hit("a1"));
             fail();
         } catch (WrongHitCoordinatesException ignore) {
         }
     }
 
     @Test
-    public void testShotHitEmptyField() throws WrongHitCoordinatesException {
+    public void testShotHitEmptyField() throws WrongHitCoordinatesException, WrongShipCoordinatesException {
 
-        Hit hit1 = new Hit('A', 1);
-        Hit hit2 = new Hit('A', 2);
-        Hit hit3 = new Hit('A', 3);
+        Hit hit1 = new Hit("A1");
+        Hit hit2 = new Hit("A2");
+        Hit hit3 = new Hit("A3");
 
         char[][] board = boardCreator.getBoard();
 
@@ -169,56 +170,15 @@ public class BattleShipsTest {
     }
 
     @Test
-    public void testShotReturnsCorrectResult() throws WrongHitCoordinatesException, ExceededNumberOfShipsException {
+    public void testShotReturnsCorrectResult() throws WrongHitCoordinatesException, ExceededNumberOfShipsException, WrongShipCoordinatesException {
         shipBuilder.buildShip(new Ship('C', 'C', 3, 5));
 
-        assertTrue(gun.hitShip(new Hit('C', 3)));
-        assertTrue(gun.hitShip(new Hit('C', 4)));
+        assertTrue(gun.hitShip(new Hit("C3")));
+        assertTrue(gun.hitShip(new Hit("C4")));
         assertFalse(((Ship) ShipBuilder.getShips().toArray()[0]).destroyed());
-        assertTrue(gun.hitShip(new Hit('C', 5)));
+        assertTrue(gun.hitShip(new Hit("C5")));
 
         assertTrue(((Ship) ShipBuilder.getShips().toArray()[0]).destroyed());
     }
 
-    @Test
-    @Ignore
-    public void testGetAllActiveGames() {
-        fail();
-    }
-
-    @Test
-    @Ignore
-    public void testJoinSpecificGame() {
-        fail();
-    }
-
-    @Test
-    @Ignore
-    public void testJoinRandomGame() {
-        fail();
-    }
-
-    @Test
-    @Ignore
-    public void testPrintAllSavedGames() {
-        fail();
-    }
-
-    @Test
-    @Ignore
-    public void testSaveGame() {
-        fail();
-    }
-
-    @Test
-    @Ignore
-    public void testLoadGame() {
-        fail();
-    }
-
-    @Test
-    @Ignore
-    public void testDeleteGame() {
-        fail();
-    }
 }

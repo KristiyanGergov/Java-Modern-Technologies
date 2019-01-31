@@ -1,6 +1,7 @@
 package bg.sofia.uni.fmi.mjt.battleships.client;
 
-import bg.sofia.uni.fmi.mjt.battleships.models.Player;
+import bg.sofia.uni.fmi.mjt.battleships.IO.InputHandler;
+import bg.sofia.uni.fmi.mjt.battleships.server.GameServer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,27 +13,27 @@ import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.SOCK
 
 public class ClientConnectionRunnable implements Runnable {
 
-    private Player player;
-    private Socket socket;
+    private GameServer server;
 
-    public ClientConnectionRunnable(Player user, Socket socket) {
-        this.player = user;
-        this.socket = socket;
+    public ClientConnectionRunnable(GameServer server) {
+        this.server = server;
     }
 
 
     @Override
     public void run() {
-        try {
 
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        Socket socket = server.getSocket();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
             PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
 
             while (!socket.isClosed()) {
                 String commandInput = reader.readLine();
 
                 if (commandInput != null) {
-//                    new InputHandler().processServerCommand(commandInput, writer, player);
+                    new InputHandler().processServerCommand(commandInput, writer, server.getCurrentPlayer());
                 }
 
             }
