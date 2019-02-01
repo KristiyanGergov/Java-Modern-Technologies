@@ -1,7 +1,6 @@
 package bg.sofia.uni.fmi.mjt.battleships.client;
 
 import bg.sofia.uni.fmi.mjt.battleships.IO.InputHandler;
-import bg.sofia.uni.fmi.mjt.battleships.util.InputValidator;
 import bg.sofia.uni.fmi.mjt.battleships.util.ThreadExecutor;
 
 import java.io.IOException;
@@ -18,7 +17,6 @@ public class GameClient {
     public static boolean connect(String username) {
 
         try {
-
             Socket socket = new Socket(HOST, PORT);
             InputHandler.setOutputHandler(new PrintWriter(socket.getOutputStream(), true));
             InputHandler.print(username);

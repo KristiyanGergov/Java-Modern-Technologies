@@ -1,9 +1,14 @@
 import bg.sofia.uni.fmi.mjt.battleships.client.GameClient;
+import bg.sofia.uni.fmi.mjt.battleships.models.Player;
 import bg.sofia.uni.fmi.mjt.battleships.server.GameServer;
+import bg.sofia.uni.fmi.mjt.battleships.util.CommandExecutor;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.net.Socket;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -13,25 +18,34 @@ public class BattleShipsServerTest {
     private GameServer gameServer;
 
     @Before
-    public void initf() {
+    public void init() {
         gameServer = new GameServer();
         new Thread(gameServer).start();
     }
 
+    @Test
+    public synchronized void testAddingPlayerOnConnection() {
 
-    @BeforeClass
-    public static void init() {
-//        new Thread(new ChatServerRunnable()).start();
+        GameClient.connect("Gosho");
+        assertEquals(gameServer.getLastJoinedPlayer().getUsername(), "Gosho");
+
+        GameClient.connect("Pesho");
+        assertEquals(gameServer.getLastJoinedPlayer().getUsername(), "Pesho");
+
     }
 
     @Test
-    public void testAddingPlayer() {
+    public synchronized void testCreateGame() throws FileNotFoundException {
+
+        CommandExecutor commandExecutor = new CommandExecutor(
+                new PrintWriter("file"),
+                gameServer);
+
 
         GameClient.connect("Gosho");
-        assertEquals(gameServer.getCurrentPlayer().getUsername(), "Gosho");
-
-        GameClient.connect("Pesho");
-        assertEquals(gameServer.getCurrentPlayer().getUsername(), "Pesho");
+        commandExecutor.create("game", new Player("Gosho", new Socket()));
+        //todo
+        assertEquals(gameServer.getGames().size(), 1);
 
     }
 
@@ -44,6 +58,15 @@ public class BattleShipsServerTest {
     @Test
     @Ignore
     public void testJoinSpecificGame() {
+
+        GameClient.connect("Gosho");
+
+
+        GameClient.connect("Pesho");
+        GameClient.connect("Tosho");
+        GameClient.connect("Mosho");
+
+
         fail();
     }
 

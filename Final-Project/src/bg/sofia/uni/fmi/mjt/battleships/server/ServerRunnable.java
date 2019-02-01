@@ -20,11 +20,9 @@ public class ServerRunnable implements Runnable {
         try {
             String playerName = server.getReader().readLine();
 
-            Player player = new Player(playerName);
-            server.addPlayer(player);
-
+            Player player = new Player(playerName, server.getSocket());
+            server.setPlayer(player);
             System.out.printf(PLAYER_CONNECTED, playerName);
-
         } catch (IOException e) {
             e.printStackTrace();
             //todo

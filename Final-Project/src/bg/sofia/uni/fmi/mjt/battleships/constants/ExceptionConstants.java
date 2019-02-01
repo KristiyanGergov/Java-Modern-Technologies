@@ -16,4 +16,6 @@ public class ExceptionConstants {
 
     public static final String NO_SHIP_AT_THIS_COORDINATES = "There is no ship at this coordinates!";
 
+    public static final String ALREADY_JOINED_GAME = "You are already in a game.";
+
 }

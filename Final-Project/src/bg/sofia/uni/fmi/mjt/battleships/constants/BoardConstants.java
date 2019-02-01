@@ -31,6 +31,7 @@ public class BoardConstants {
             'J', 9
     );
 
+
     public final static Map<Integer, Integer> COLUMNS_CELLS = Map.of(
             1, 0,
             2, 1,
@@ -43,5 +44,10 @@ public class BoardConstants {
             9, 8,
             10, 9
     );
+
+
+    public final static String YOUR_BOARD = "YOUR BOARD";
+    public final static String ENEMY_BOARD = "ENEMY BOARD";
+
 
 }

@@ -21,4 +21,25 @@ public class SystemOutConstants {
 
     // C L I E N T    R U N A B L E
     public static final String SOCKET_CLOSET = "client socket is closed, stop waiting for server messages\n";
+
+
+    //
+
+    public static final String CREATED_GAME = "Created game \"%s\", players 1/2";
+
+    public static final String DELETED_GAME = "Deleted game \"%s\".";
+
+    public static final String JOINED_GAME = "Joined game \"%s\".";
+
+    public static final String AVAILABLE_COMMANDS = "\nAvailable commands:\n" +
+            "\tcreate-game <game-name>\n" +
+            "\tjoin-game [<game-name>]\n" +
+            "\tsaved-games\n" +
+            "\tload-game <game-name>\n" +
+            "\tdelete-game\n";
+
+    public static final String MENU = "menu> ";
+
+    public static final String NO_GAMES_AVAILABLE = "No games currently available. Create one.";
+
 }

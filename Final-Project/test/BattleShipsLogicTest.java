@@ -7,10 +7,10 @@ import bg.sofia.uni.fmi.mjt.battleships.util.BoardCreator;
 import bg.sofia.uni.fmi.mjt.battleships.util.Gun;
 import bg.sofia.uni.fmi.mjt.battleships.util.ShipBuilder;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.*;
+import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.COLUMNS;
+import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.ROWS;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.HitConstants.HIT_EMPTY_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.HitConstants.HIT_SHIP_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants.SHIP_FIELD;
@@ -27,23 +27,6 @@ public class BattleShipsLogicTest {
         this.boardCreator = new BoardCreator(ROWS, COLUMNS);
         this.shipBuilder = new ShipBuilder(boardCreator.getBoard());
         this.gun = new Gun(boardCreator.getBoard());
-    }
-
-    @Test
-    public void testInitializationOfBoardIsCorrect() {
-
-        char[][] board = boardCreator.getBoard();
-
-        assertEquals(board.length, ROWS);
-        assertEquals(board[0].length, COLUMNS);
-
-        for (char[] row : board) {
-            for (char col : row) {
-                if (col != DEFAULT_BOARD_FIELD)
-                    fail();
-            }
-        }
-
     }
 
     @Test
@@ -81,6 +64,7 @@ public class BattleShipsLogicTest {
             shipBuilder.buildShip(new Ship('A', 'A', 7, 8));
             fail();
         } catch (ExceededNumberOfShipsException ignore) {
+            //success
         }
 
         //T H R E E   C E L L S
@@ -94,6 +78,7 @@ public class BattleShipsLogicTest {
             fail();
 
         } catch (ExceededNumberOfShipsException ignore) {
+            //success
         }
 
         //F O U R   C E L L S
@@ -106,6 +91,7 @@ public class BattleShipsLogicTest {
             fail();
 
         } catch (ExceededNumberOfShipsException ignore) {
+            //success
         }
 
         //F I V E   C E L L S
@@ -117,6 +103,7 @@ public class BattleShipsLogicTest {
             fail();
 
         } catch (ExceededNumberOfShipsException ignore) {
+            //success
         }
 
     }

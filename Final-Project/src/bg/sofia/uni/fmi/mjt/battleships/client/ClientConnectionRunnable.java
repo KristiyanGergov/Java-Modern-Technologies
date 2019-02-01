@@ -1,6 +1,9 @@
 package bg.sofia.uni.fmi.mjt.battleships.client;
 
 import bg.sofia.uni.fmi.mjt.battleships.IO.InputHandler;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.AlreadyJoinedGameException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.NoGamesAvailableException;
+import bg.sofia.uni.fmi.mjt.battleships.models.Player;
 import bg.sofia.uni.fmi.mjt.battleships.server.GameServer;
 
 import java.io.BufferedReader;
@@ -14,9 +17,11 @@ import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.SOCK
 public class ClientConnectionRunnable implements Runnable {
 
     private GameServer server;
+    private Player player;
 
-    public ClientConnectionRunnable(GameServer server) {
+    public ClientConnectionRunnable(GameServer server, Player player) {
         this.server = server;
+        this.player = player;
     }
 
 
@@ -27,17 +32,21 @@ public class ClientConnectionRunnable implements Runnable {
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
-            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+            try (PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
 
-            while (!socket.isClosed()) {
-                String commandInput = reader.readLine();
+                while (!socket.isClosed()) {
+                    String commandInput = reader.readLine();
 
-                if (commandInput != null) {
-                    new InputHandler().processServerCommand(commandInput, writer, server.getCurrentPlayer());
+                    if (commandInput != null) {
+                        try {
+                            new InputHandler().processServerCommand(commandInput, writer, server, player);
+                        } catch (NoGamesAvailableException | AlreadyJoinedGameException e) {
+                            writer.println(e.getMessage());
+                        }
+                    }
+
                 }
-
             }
-
         } catch (IOException e) {
             System.out.println(SOCKET_CLOSET);
             System.out.println(e.getMessage());

@@ -4,6 +4,6 @@ public class RegexConstants {
 
     public static String CONNECT_PATTERN = "^\\$\\sjava\\srun-client.java\\s--username\\s(.+)$";
 
-    public static String COMMAND_PATTERN = "^([\\w-]+)\\s*([\\w-]+)$";
+    public static String COMMAND_PATTERN = "^([\\w-]+)\\s*([\\w-]*)$";
 
 }

@@ -2,6 +2,8 @@ package bg.sofia.uni.fmi.mjt.battleships.server;
 
 import bg.sofia.uni.fmi.mjt.battleships.client.ClientConnectionRunnable;
 import bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.GameFullException;
+import bg.sofia.uni.fmi.mjt.battleships.models.Game;
 import bg.sofia.uni.fmi.mjt.battleships.models.Player;
 import bg.sofia.uni.fmi.mjt.battleships.util.ThreadExecutor;
 
@@ -14,48 +16,72 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ServerConstants.PORT;
+import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.PLAYER_CONNECTED;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.PORT_8080_TAKEN;
 
 public class GameServer implements Runnable {
 
     private BufferedReader reader;
-    private Socket socket;
 
-    private Map<Player, Socket> players;
+    private Map<String, Game> games;
     private Player currentPlayer;
 
+    public void addGame(String gameName, Game game) {
+        games.put(gameName, game);
+    }
+
+    public synchronized void removeGame(String gameName) {
+        games.remove(gameName);
+    }
+
+    public Map<String, Game> getGames() {
+        return this.games;
+    }
+
+    public Game getGame(String gameName) {
+        return games.get(gameName);
+    }
+
+    public synchronized void joinGame(String game, Player player) throws GameFullException {
+        games.get(game).join(player);
+    }
 
     public synchronized BufferedReader getReader() {
         return reader;
     }
 
-    public synchronized void addPlayer(Player player) {
-        players.put(player, socket);
-        this.currentPlayer = player;
-    }
-
-    public synchronized Player getCurrentPlayer() {
+    public synchronized Player getLastJoinedPlayer() {
         return currentPlayer;
     }
 
+    public synchronized void setPlayer(Player player) {
+        currentPlayer = player;
+    }
+
     public synchronized Socket getSocket() {
-        return socket;
+        return currentPlayer.getSocket();
     }
 
     private void processInput(ServerSocket serverSocket) throws IOException {
 
         while (true) {
 
-            socket = serverSocket.accept();
+
+            Socket socket = serverSocket.accept();
             System.out.printf(SystemOutConstants.CLIENT_CONNECTED_TO_SERVER, socket.getInetAddress());
 
             reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            ServerRunnable serverRunnable = new ServerRunnable(this);
-            ThreadExecutor.execute(serverRunnable);
+            String playerName = reader.readLine();
+            Player player = new Player(playerName, socket);
+            setPlayer(player);
+            System.out.printf(PLAYER_CONNECTED, playerName);
 
-            ClientConnectionRunnable clientRunnable = new ClientConnectionRunnable(this);
+//            ServerRunnable serverRunnable = new ServerRunnable(this);
+//            ThreadExecutor.execute(serverRunnable);
+            ClientConnectionRunnable clientRunnable = new ClientConnectionRunnable(this, player);
             ThreadExecutor.execute(clientRunnable);
+
         }
     }
 
@@ -76,7 +102,7 @@ public class GameServer implements Runnable {
 
     @Override
     public void run() {
-        players = new HashMap<>();
+        games = new HashMap<>();
 
         try (ServerSocket serverSocket = startServer()) {
 
