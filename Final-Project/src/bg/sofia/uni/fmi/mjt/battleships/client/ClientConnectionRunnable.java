@@ -1,8 +1,8 @@
 package bg.sofia.uni.fmi.mjt.battleships.client;
 
 import bg.sofia.uni.fmi.mjt.battleships.IO.InputHandler;
-import bg.sofia.uni.fmi.mjt.battleships.exceptions.AlreadyJoinedGameException;
-import bg.sofia.uni.fmi.mjt.battleships.exceptions.NoGamesAvailableException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.InvalidCommandException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongCoordinatesException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Player;
 import bg.sofia.uni.fmi.mjt.battleships.server.GameServer;
 
@@ -40,7 +40,7 @@ public class ClientConnectionRunnable implements Runnable {
                     if (commandInput != null) {
                         try {
                             new InputHandler().processServerCommand(commandInput, writer, server, player);
-                        } catch (NoGamesAvailableException | AlreadyJoinedGameException e) {
+                        } catch (InvalidCommandException | WrongCoordinatesException e) {
                             writer.println(e.getMessage());
                         }
                     }

@@ -2,7 +2,7 @@ package bg.sofia.uni.fmi.mjt.battleships.server;
 
 import bg.sofia.uni.fmi.mjt.battleships.client.ClientConnectionRunnable;
 import bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants;
-import bg.sofia.uni.fmi.mjt.battleships.exceptions.GameFullException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.UnableToJoinGameException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Game;
 import bg.sofia.uni.fmi.mjt.battleships.models.Player;
 import bg.sofia.uni.fmi.mjt.battleships.util.ThreadExecutor;
@@ -15,6 +15,7 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
+import static bg.sofia.uni.fmi.mjt.battleships.constants.ExceptionConstants.FULL_GAME;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ServerConstants.PORT;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.PLAYER_CONNECTED;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.PORT_8080_TAKEN;
@@ -42,8 +43,9 @@ public class GameServer implements Runnable {
         return games.get(gameName);
     }
 
-    public synchronized void joinGame(String game, Player player) throws GameFullException {
-        games.get(game).join(player);
+    public synchronized void joinGame(String game, Player player) throws UnableToJoinGameException {
+        if (!games.get(game).join(player))
+            throw new UnableToJoinGameException(FULL_GAME);
     }
 
     public synchronized BufferedReader getReader() {

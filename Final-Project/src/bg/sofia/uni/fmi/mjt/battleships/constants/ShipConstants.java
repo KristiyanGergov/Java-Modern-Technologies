@@ -12,5 +12,6 @@ public class ShipConstants {
 
     public static final char SHIP_FIELD = '*';
 
+    public static final int MAXIMUM_SHIPS = 10;
 
 }

@@ -1,19 +1,25 @@
 package bg.sofia.uni.fmi.mjt.battleships.util;
 
-import bg.sofia.uni.fmi.mjt.battleships.exceptions.ExceededNumberOfShipsException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.InvalidCommandException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongCoordinatesException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
 import bg.sofia.uni.fmi.mjt.battleships.models.ShipCoordinates;
 
-import java.util.Collection;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants.*;
 
-public class ShipBuilder {
+public class ShipBuilder implements Serializable {
 
     private char[][] board;
+
+    private int shipsWith5CellsLeft = 1;
+    private int shipsWith4CellsLeft = 2;
+    private int shipsWith3CellsLeft = 3;
+    private int shipsWith2CellsLeft = 4;
 
     private static Map<Ship, Integer> ships;
 
@@ -22,48 +28,78 @@ public class ShipBuilder {
         ships = new HashMap<>();
     }
 
-    private boolean areMaximumShipsReached(Collection<Integer> cellsNumber, int maximumShips, int shipCell) {
+    private boolean areMaximumShipsReached(ShipCoordinates coordinates) {
 
-        int counter = 0;
-        for (int cell : cellsNumber) {
+        switch (coordinates.getCellsNumber()) {
 
-            if (cell == shipCell)
-                counter++;
-
-            if (counter >= maximumShips)
-                return false;
+            case ONE_SHIP_CELLS:
+                if (shipsWith5CellsLeft == 0)
+                    return false;
+                shipsWith5CellsLeft--;
+                break;
+            case TWO_SHIPS_CELLS:
+                if (shipsWith4CellsLeft == 0)
+                    return false;
+                shipsWith4CellsLeft--;
+                break;
+            case THREE_SHIPS_CELLS:
+                if (shipsWith3CellsLeft == 0)
+                    return false;
+                shipsWith3CellsLeft--;
+                break;
+            case FOUR_SHIPS_CELLS:
+                if (shipsWith2CellsLeft == 0)
+                    return false;
+                shipsWith2CellsLeft--;
+                break;
         }
+
         return true;
+
     }
 
-    private boolean checkIfShipCanBeAdded(int shipCells) {
+    private boolean checkIfShipCanBeAdded(ShipCoordinates coordinates) throws WrongCoordinatesException {
 
-        Collection<Integer> cellsNumber = ships.values();
+        if (coordinates.getStartRow() == coordinates.getEndRow()) {
+            for (int i = coordinates.getStartCol(); i <= coordinates.getEndCol(); i++) {
+                if (board[coordinates.getStartRow()][i] == SHIP_FIELD)
+                    throw new WrongCoordinatesException("There is already a ship at some of the provided coordinates!");
+            }
+        } else {
+            for (int i = coordinates.getStartRow(); i < coordinates.getEndRow(); i++) {
+                if (board[i][coordinates.getStartCol()] == SHIP_FIELD)
+                    throw new WrongCoordinatesException("There is already a ship at some of the provided coordinates!");
+            }
+        }
+
+        int shipCells = coordinates.getCellsNumber();
 
         switch (shipCells) {
 
             case ONE_SHIP_CELLS:
-                return areMaximumShipsReached(cellsNumber, 1, ONE_SHIP_CELLS);
+                return areMaximumShipsReached(coordinates);
             case TWO_SHIPS_CELLS:
-                return areMaximumShipsReached(cellsNumber, 2, TWO_SHIPS_CELLS);
+                return areMaximumShipsReached(coordinates);
             case THREE_SHIPS_CELLS:
-                return areMaximumShipsReached(cellsNumber, 3, THREE_SHIPS_CELLS);
+                return areMaximumShipsReached(coordinates);
             case FOUR_SHIPS_CELLS:
-                return areMaximumShipsReached(cellsNumber, 4, FOUR_SHIPS_CELLS);
+                return areMaximumShipsReached(coordinates);
         }
+
 
         return true;
     }
 
-    public void buildShip(Ship ship) throws ExceededNumberOfShipsException {
+    public void buildShip(Ship ship) throws InvalidCommandException, WrongCoordinatesException {
 
         final ShipCoordinates coordinates = ship.getShipCoordinates();
 
-        int shipCells = coordinates.getCellsNumber();
+        if (!checkIfShipCanBeAdded(coordinates))
+            throw new InvalidCommandException(
+                    String.format("Reached the maximum ships with %d cells!", coordinates.getCellsNumber()));
 
-        if (!checkIfShipCanBeAdded(shipCells))
-            throw new ExceededNumberOfShipsException(
-                    String.format("Reached the maximum ships with %d cells!", shipCells));
+        if (coordinates.getCellsNumber() > 5 || coordinates.getCellsNumber() < 2)
+            throw new WrongCoordinatesException("Ship cells must be in range 2 - 5!");
 
         ships.put(ship, coordinates.getCellsNumber());
 
@@ -94,5 +130,21 @@ public class ShipBuilder {
 
     public static Set<Ship> getShips() {
         return ships.keySet();
+    }
+
+    public int getShipsWith5CellsLeft() {
+        return shipsWith5CellsLeft;
+    }
+
+    public int getShipsWith4CellsLeft() {
+        return shipsWith4CellsLeft;
+    }
+
+    public int getShipsWith3CellsLeft() {
+        return shipsWith3CellsLeft;
+    }
+
+    public int getShipsWith2CellsLeft() {
+        return shipsWith2CellsLeft;
     }
 }

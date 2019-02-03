@@ -1,7 +1,7 @@
 package bg.sofia.uni.fmi.mjt.battleships.models;
 
 import bg.sofia.uni.fmi.mjt.battleships.enums.ShipOrientationType;
-import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongShipCoordinatesException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongCoordinatesException;
 
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ExceptionConstants.VERTICAL_OR_HORIZONTAL_SHIP;
 
@@ -22,7 +22,7 @@ public class Ship {
     public Ship(char startRow, char endRow, int startCol, int endCol) {
         try {
             this.type = initializeShipType(startRow, endRow, startCol, endCol);
-        } catch (WrongShipCoordinatesException e) {
+        } catch (WrongCoordinatesException e) {
             e.printStackTrace();
             //todo
         }
@@ -38,18 +38,15 @@ public class Ship {
         return lives == 0;
     }
 
-    private ShipOrientationType initializeShipType(char startRow, char endRow, int startCol, int endCol) throws WrongShipCoordinatesException {
+    private ShipOrientationType initializeShipType(char startRow, char endRow, int startCol, int endCol) throws WrongCoordinatesException {
 
         if (startRow == endRow)
             return ShipOrientationType.Horizontal;
         else if (startCol == endCol)
             return ShipOrientationType.Vertical;
 
-        throw new WrongShipCoordinatesException(VERTICAL_OR_HORIZONTAL_SHIP);
+        throw new WrongCoordinatesException(VERTICAL_OR_HORIZONTAL_SHIP);
 
     }
-
-
-
 
 }

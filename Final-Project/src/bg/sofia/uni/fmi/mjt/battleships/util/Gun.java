@@ -1,9 +1,10 @@
 package bg.sofia.uni.fmi.mjt.battleships.util;
 
-import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongHitCoordinatesException;
-import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongShipCoordinatesException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongCoordinatesException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Hit;
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
+
+import java.io.Serializable;
 
 import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.DEFAULT_BOARD_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ExceptionConstants.ALREADY_SHOT_FIELD;
@@ -12,7 +13,7 @@ import static bg.sofia.uni.fmi.mjt.battleships.constants.HitConstants.HIT_EMPTY_
 import static bg.sofia.uni.fmi.mjt.battleships.constants.HitConstants.HIT_SHIP_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants.SHIP_FIELD;
 
-public class Gun {
+public class Gun implements Serializable {
 
     private char[][] board;
 
@@ -20,7 +21,7 @@ public class Gun {
         this.board = board;
     }
 
-    private Ship findShipToHit(Hit hit) throws WrongShipCoordinatesException {
+    private Ship findShipToHit(Hit hit) throws WrongCoordinatesException {
 
         final int row = hit.getRow();
         final int col = hit.getCol();
@@ -42,10 +43,10 @@ public class Gun {
             }
         }
 
-        throw new WrongShipCoordinatesException(NO_SHIP_AT_THIS_COORDINATES);
+        throw new WrongCoordinatesException(NO_SHIP_AT_THIS_COORDINATES);
     }
 
-    public boolean hitShip(Hit hit) throws WrongHitCoordinatesException, WrongShipCoordinatesException {
+    public Ship hitShip(Hit hit) throws WrongCoordinatesException {
 
         final int row = hit.getRow();
         final int col = hit.getCol();
@@ -53,15 +54,16 @@ public class Gun {
         final char current = board[row][col];
 
         if (current == SHIP_FIELD) {
-            findShipToHit(hit).hit();
+            Ship ship = findShipToHit(hit);
+            ship.hit();
             board[row][col] = HIT_SHIP_FIELD;
-            return true;
+            return ship;
         } else if (current == DEFAULT_BOARD_FIELD) {
             board[row][col] = HIT_EMPTY_FIELD;
-            return false;
+            return null;
         }
 
-        throw new WrongHitCoordinatesException(ALREADY_SHOT_FIELD);
+        throw new WrongCoordinatesException(ALREADY_SHOT_FIELD);
     }
 
 }

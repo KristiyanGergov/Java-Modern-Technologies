@@ -1,8 +1,10 @@
 package bg.sofia.uni.fmi.mjt.battleships.util;
 
+import java.io.Serializable;
+
 import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.DEFAULT_BOARD_FIELD;
 
-public class BoardCreator {
+public class BoardCreator implements Serializable {
 
     private int rows;
     private int cols;

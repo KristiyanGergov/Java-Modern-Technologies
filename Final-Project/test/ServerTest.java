@@ -1,4 +1,5 @@
 import bg.sofia.uni.fmi.mjt.battleships.client.GameClient;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.InvalidCommandException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Player;
 import bg.sofia.uni.fmi.mjt.battleships.server.GameServer;
 import bg.sofia.uni.fmi.mjt.battleships.util.CommandExecutor;
@@ -13,7 +14,7 @@ import java.net.Socket;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class BattleShipsServerTest {
+public class ServerTest {
 
     private GameServer gameServer;
 
@@ -35,7 +36,7 @@ public class BattleShipsServerTest {
     }
 
     @Test
-    public synchronized void testCreateGame() throws FileNotFoundException {
+    public synchronized void testCreateGame() throws FileNotFoundException, InvalidCommandException {
 
         CommandExecutor commandExecutor = new CommandExecutor(
                 new PrintWriter("file"),

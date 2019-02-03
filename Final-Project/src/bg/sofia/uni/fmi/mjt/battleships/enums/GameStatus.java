@@ -1,7 +1,18 @@
 package bg.sofia.uni.fmi.mjt.battleships.enums;
 
-public enum GameStatus {
-    Pending,
-    InProgress
+import java.io.Serializable;
 
+public enum GameStatus implements Serializable {
+    Pending("pending"),
+    InProgress("in progress");
+
+    private String name;
+
+    GameStatus(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

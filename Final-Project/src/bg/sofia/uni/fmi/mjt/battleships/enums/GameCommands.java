@@ -7,7 +7,9 @@ public enum GameCommands {
     SAVE("save-game"),
     SAVED("saved-games"),
     LOAD("load-game"),
-    DELETE("delete-game");
+    DELETE("delete-game"),
+    LEAVE("leave-game"),
+    LIST("list-games");
 
     private String command;
 

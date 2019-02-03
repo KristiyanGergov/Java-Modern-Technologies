@@ -1,26 +1,42 @@
 package bg.sofia.uni.fmi.mjt.battleships.models;
 
 import bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.InvalidCommandException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongCoordinatesException;
 import bg.sofia.uni.fmi.mjt.battleships.util.BoardCreator;
 import bg.sofia.uni.fmi.mjt.battleships.util.Gun;
 import bg.sofia.uni.fmi.mjt.battleships.util.ShipBuilder;
 
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.net.Socket;
 
-public class Player {
+import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.SHIPS_LEFT;
 
-    private Socket socket;
+public class Player implements Serializable {
+
+    private transient Socket socket;
     private String username;
     private BoardCreator boardCreator;
     private Gun gun;
     private ShipBuilder shipBuilder;
-    private Game game;
+    private transient Game game;
+    private boolean onTurn;
+
 
     public Player(String username, Socket socket) {
         this.username = username;
         this.socket = socket;
         this.boardCreator = new BoardCreator(BoardConstants.ROWS, BoardConstants.COLUMNS);
         this.shipBuilder = new ShipBuilder(boardCreator.getBoard());
+    }
+
+    public boolean isOnTurn() {
+        return onTurn;
+    }
+
+    void setOnTurn(boolean onTurn) {
+        this.onTurn = onTurn;
     }
 
     public Game getGame() {
@@ -43,5 +59,42 @@ public class Player {
         return username;
     }
 
+    public boolean buildShip(char startRow, char endRow, int startCol, int endCol) throws WrongCoordinatesException, InvalidCommandException {
+        if (hasBuildAllShips())
+            return false;
+
+        shipBuilder.buildShip(new Ship(startRow, endRow, startCol, endCol));
+        return true;
+    }
+
+    public void printNumberOfLeftShips(PrintWriter writer) {
+        writer.println(String.format(SHIPS_LEFT,
+                shipBuilder.getShipsWith5CellsLeft(),
+                shipBuilder.getShipsWith4CellsLeft(),
+                shipBuilder.getShipsWith3CellsLeft(),
+                shipBuilder.getShipsWith2CellsLeft()));
+
+    }
+
+    public boolean hasBuildAllShips() {
+        return shipBuilder.getShipsWith2CellsLeft() == 0 &&
+                shipBuilder.getShipsWith3CellsLeft() == 0 &&
+                shipBuilder.getShipsWith4CellsLeft() == 0 &&
+                shipBuilder.getShipsWith5CellsLeft() == 0;
+    }
+
+    void setGun(Gun gun) {
+        this.gun = gun;
+    }
+
+    public Ship makeShot(String coordinates) throws InvalidCommandException, WrongCoordinatesException {
+
+        if (!onTurn)
+            throw new InvalidCommandException("It's your opponent turn!");
+
+        Ship ship = gun.hitShip(new Hit(coordinates.toUpperCase()));
+        game.switchTurns();
+        return ship;
+    }
 
 }

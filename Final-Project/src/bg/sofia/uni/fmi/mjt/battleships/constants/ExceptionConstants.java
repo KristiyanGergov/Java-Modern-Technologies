@@ -18,4 +18,11 @@ public class ExceptionConstants {
 
     public static final String ALREADY_JOINED_GAME = "You are already in a game.";
 
+    public static final String INVALID_COMMAND = "\"%s\" is invalid command! available commands are: %s";
+
+    public static final String INVALID_COORDINATES = "Provided coordinates are not valid! Please try again.";
+
+    public static final String CANT_ADD_MORE_THAN_10_SHIPS = "You can't add more than 10 ships!";
+
+    public static final String NOT_CONNECTED_TO_SERVER = "You must connect to the server first!";
 }
