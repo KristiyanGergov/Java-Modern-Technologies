@@ -7,11 +7,6 @@ import static bg.sofia.uni.fmi.mjt.battleships.constants.RegexConstants.*;
 
 public class InputValidator {
 
-    public static Matcher getMatcherConnect(String input) {
-        Pattern pattern = Pattern.compile(CONNECT_PATTERN);
-        return pattern.matcher(input);
-    }
-
     public static Matcher getMatcherCommand(String input) {
         Pattern pattern = Pattern.compile(COMMAND_PATTERN);
         return pattern.matcher(input);

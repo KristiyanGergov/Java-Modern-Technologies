@@ -24,9 +24,6 @@ public class OutputHandler {
             writer.println(output);
         else
             writer.println(String.format(output, argument));
-
-        writer.write(MENU);
-        writer.flush();
     }
 
     private String getListGamesText(String text, final int length) {

@@ -25,4 +25,11 @@ public class ExceptionConstants {
     public static final String CANT_ADD_MORE_THAN_10_SHIPS = "You can't add more than 10 ships!";
 
     public static final String NOT_CONNECTED_TO_SERVER = "You must connect to the server first!";
+
+    public static final String NO_GAME_TO_SAVE = "You have to be in a game in order to save it.";
+
+    public static final String GAME_DOES_NOT_EXIST = "\"%s\" does not exist.";
+
+    public static final String GAME_SAVED = "Game saved successfully.\n";
+
 }

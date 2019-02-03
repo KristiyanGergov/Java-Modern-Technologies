@@ -1,0 +1,12 @@
+connect gosho
+create-game game
+build A1-A2
+build A3-A4
+build A5-A6
+build A7-A8
+build B1-B3
+build B4-B6
+build B7-B9
+build C1-C4
+build C4-C7
+build D1-D5

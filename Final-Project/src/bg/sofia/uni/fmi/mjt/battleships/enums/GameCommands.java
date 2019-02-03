@@ -2,6 +2,7 @@ package bg.sofia.uni.fmi.mjt.battleships.enums;
 
 public enum GameCommands {
 
+    CONNECT("connect"),
     CREATE("create-game"),
     JOIN("join-game"),
     SAVE("save-game"),
@@ -9,7 +10,8 @@ public enum GameCommands {
     LOAD("load-game"),
     DELETE("delete-game"),
     LEAVE("leave-game"),
-    LIST("list-games");
+    LIST("list-games"),
+    HIT("hit");
 
     private String command;
 

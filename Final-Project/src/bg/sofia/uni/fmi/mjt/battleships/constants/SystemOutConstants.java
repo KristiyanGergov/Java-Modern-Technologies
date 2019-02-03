@@ -13,11 +13,12 @@ public class SystemOutConstants {
 
 
     // C H A T    C L I E N T
-    public static final String SUCCESSFULLY_CONNECTED = "=> connected to server as %s\n";
+    public static final String SUCCESSFULLY_CONNECTED = "connected to server as %s\n";
 
     public static final String CANNOT_CONNECT_TO_SERVER =
-            "=> cannot connect to server on %s:%s, make sure that the server is started\n";
+            "cannot connect to server on %s:%s, make sure that the server is started\n";
 
+    public static final String CONNECT_COMMANDS = "To connect to server enter \"connect username\".";
 
     // C L I E N T    R U N A B L E
     public static final String SOCKET_CLOSET = "client socket is closed, stop waiting for server messages\n";
@@ -33,12 +34,14 @@ public class SystemOutConstants {
             "\tjoin-game [<game-name>]\n" +
             "\tsaved-games\n" +
             "\tload-game <game-name>\n" +
+            "\tload-games\n" +
             "\tdelete-game\n" +
             "\tlist-games\n";
 
     public static final String AVAILABLE_COMMANDS_AFTER_JOINING_GAME = "\nAvailable commands:\n" +
             "\tleave-game\n" +
-            "\t[A-J][1-10]-[A-J][1-10] (ship location)\n";
+            "\tsave-game\n" +
+            "\tbuild [A-J][1-10]-[A-J][1-10] (ship location)\n";
 
     public static final String MENU = "menu> ";
 
