@@ -1,3 +1,5 @@
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.InvalidCommandException;
+import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongCoordinatesException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Game;
 import bg.sofia.uni.fmi.mjt.battleships.models.Player;
 import org.junit.Before;
@@ -61,4 +63,26 @@ public class GameTest {
         assertTrue(game.isFull());
     }
 
+    @Test
+    public void testGameFinishes() throws WrongCoordinatesException, InvalidCommandException {
+        Player player1 = new Player("gosho", new Socket());
+        Player player2 = new Player("tosho", new Socket());
+
+        Game game = new Game(player2, "game");
+        game.join(player1);
+
+        player2.buildShip('A', 'A', 1, 2);
+        player2.buildShip('A', 'A', 3, 4);
+        player2.buildShip('A', 'A', 5, 6);
+        player2.buildShip('A', 'A', 7, 8);
+        player2.buildShip('B', 'B', 1, 3);
+        player2.buildShip('B', 'B', 4, 6);
+        player2.buildShip('B', 'B', 7, 9);
+        player2.buildShip('C', 'C', 1, 4);
+        player2.buildShip('C', 'C', 5, 8);
+        player2.buildShip('D', 'D', 1, 5);
+
+        assertTrue(player2.hasBuildAllShips());
+
+    }
 }

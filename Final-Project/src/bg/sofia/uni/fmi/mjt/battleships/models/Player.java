@@ -98,7 +98,7 @@ public class Player implements Serializable {
 
     public Ship makeShot(String coordinates) throws InvalidCommandException, WrongCoordinatesException {
 
-        if (!onTurn)
+        if (!isOnTurn())
             throw new InvalidCommandException("It's your opponent turn!");
 
         Ship ship = gun.hitShip(new Hit(coordinates.toUpperCase()));
