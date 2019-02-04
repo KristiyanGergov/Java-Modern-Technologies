@@ -16,6 +16,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ExceptionConstants.INVALID_COMMAND;
+import static bg.sofia.uni.fmi.mjt.battleships.constants.ExceptionConstants.NOT_CONNECTED_TO_SERVER;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.*;
 import static bg.sofia.uni.fmi.mjt.battleships.enums.GameCommands.*;
 
@@ -42,7 +43,7 @@ public class InputHandler {
                 Matcher matcher = InputValidator.getMatcherCommand(input);
 
                 if (matcher.matches()) {
-                    String command = matcher.group(1);
+                    String command = matcher.group(1).toLowerCase();
                     String commandParams = matcher.group(2);
 
                     if (command.equals(CONNECT.getCommand())) {
@@ -56,7 +57,7 @@ public class InputHandler {
                             print(input);
                         }
                     } else
-                        throw new NotConnectedException("You need to connect to the server first!");
+                        throw new NotConnectedException(NOT_CONNECTED_TO_SERVER);
                 }
             }
         }
@@ -91,7 +92,7 @@ public class InputHandler {
             String commandParams = matcher.group(2);
 
             if (command.equals(LEAVE.getCommand())) {
-                executor.leave();
+                executor.leave(player);
             } else {
 
                 matcher = InputValidator.getMatcherCoordinatesBuildShip(commandParams);
@@ -155,6 +156,8 @@ public class InputHandler {
                 executor.list();
             } else if (command.equals(LOAD.getCommand())) {
                 executor.load(matcher.group(2));
+            } else if (command.equals(LEAVE.getCommand())) {
+                executor.leave(player);
             } else if (command.equals(SAVED.getCommand())) {
                 //todo
             } else {

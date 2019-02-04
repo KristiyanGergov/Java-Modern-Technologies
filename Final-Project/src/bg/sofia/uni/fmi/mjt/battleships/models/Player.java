@@ -97,4 +97,10 @@ public class Player implements Serializable {
         return ship;
     }
 
+    public void reset() {
+        this.boardCreator = new BoardCreator(BoardConstants.ROWS, BoardConstants.COLUMNS);
+        this.shipBuilder = new ShipBuilder(boardCreator.getBoard());
+        this.onTurn = false;
+        this.game = null;    }
+
 }

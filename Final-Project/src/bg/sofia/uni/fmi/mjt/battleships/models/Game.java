@@ -12,17 +12,23 @@ public class Game implements Serializable {
     private String name;
     private Player player1;
     private Player player2;
-    private GameStatus status;
+    private String creator;
 
     public Game(Player player1, String name) {
+        this.creator = player1.getUsername();
         this.player1 = player1;
         this.player1.setGame(this);
-        this.status = GameStatus.Pending;
         this.name = name;
     }
 
+    public String getCreator() {
+        return creator;
+    }
+
     public GameStatus getStatus() {
-        return status;
+        if (isFull())
+            return GameStatus.InProgress;
+        return GameStatus.Pending;
     }
 
     public int getPlayersNumber() {
@@ -34,7 +40,11 @@ public class Game implements Serializable {
     }
 
     public boolean join(Player player) {
-        if (this.player2 == null) {
+        if (player1 == null) {
+            player1 = player;
+            player1.setGame(this);
+            return true;
+        } else if (this.player2 == null) {
             this.player2 = player;
             this.player2.setOnTurn(true);
             this.player2.setGame(this);
@@ -75,10 +85,6 @@ public class Game implements Serializable {
         return player1;
     }
 
-    public void setStatus(GameStatus status) {
-        this.status = status;
-    }
-
     public Player getPlayer2() {
         return player2;
     }
@@ -99,6 +105,27 @@ public class Game implements Serializable {
         return name;
     }
 
+    public void leave(Player player) {
+
+        if (player.isOnTurn()) {
+            if (player1.isOnTurn()) {
+                player1.reset();
+                player1 = null;
+            } else {
+                player2.reset();
+                player2 = null;
+            }
+        } else {
+            if (!player1.isOnTurn()) {
+                player1.reset();
+                player1 = null;
+            } else {
+                player2.reset();
+                player2 = null;
+            }
+        }
+
+    }
 
     public void switchTurns() {
         if (player1.isOnTurn()) {

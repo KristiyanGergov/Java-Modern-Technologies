@@ -27,6 +27,8 @@ public class SystemOutConstants {
 
     public static final String DELETED_GAME = "Deleted game \"%s\".";
 
+    public static final String UNABLE_DELETE_GAME = "Couldn't find \"%s\".";
+
     public static final String JOINED_GAME = "Joined game \"%s\".";
 
     public static final String AVAILABLE_COMMANDS = "\nAvailable commands:\n" +
@@ -35,7 +37,7 @@ public class SystemOutConstants {
             "\tsaved-games\n" +
             "\tload-game <game-name>\n" +
             "\tload-games\n" +
-            "\tdelete-game\n" +
+            "\tdelete-game <game-name>\n" +
             "\tlist-games\n";
 
     public static final String AVAILABLE_COMMANDS_AFTER_JOINING_GAME = "\nAvailable commands:\n" +
@@ -109,5 +111,9 @@ public class SystemOutConstants {
     public static final String YOUR_TURN = "It's your turn now.";
 
     public static final String YOUR_OPPONENT_TURN = "It's your opponent turn now.";
+
+    public static final String LEFT_GAME = "You left game \"%s\"";
+
+    public static final String NOT_CURRENTLY_IN_A_GAME = "You are not currently in a game!";
 
 }

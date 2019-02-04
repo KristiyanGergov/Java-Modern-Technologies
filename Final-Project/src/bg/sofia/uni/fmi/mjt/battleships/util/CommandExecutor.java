@@ -1,7 +1,6 @@
 package bg.sofia.uni.fmi.mjt.battleships.util;
 
 import bg.sofia.uni.fmi.mjt.battleships.IO.OutputHandler;
-import bg.sofia.uni.fmi.mjt.battleships.enums.GameStatus;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.InvalidCommandException;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.UnableToJoinGameException;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongCoordinatesException;
@@ -43,7 +42,7 @@ public class CommandExecutor {
         Game game = new Game(player, gameName);
         server.addGame(gameName, game);
         outputHandler.printCommands(CREATED_GAME, gameName);
-        writer.println(NOTIFIED_WHEN_JOIN);
+        outputHandler.print(NOTIFIED_WHEN_JOIN);
     }
 
     private static String readFileAsString(String fileName) throws IOException {
@@ -121,9 +120,12 @@ public class CommandExecutor {
             server.joinGame(gameName, player);
             outputHandler.printCommands(JOINED_GAME, gameName);
 
-            PrintWriter otherWriter = new PrintWriter(game.getPlayer1().getSocket().getOutputStream(), true);
-            otherWriter.println(game.getPlayer2().getUsername() + " joined.");
-            startGame(game);
+            if (game.getPlayer2() != null) {
+                outputHandler.print(game.getPlayer2().getUsername() + " joined.");
+                startGame(game);
+            } else {
+                outputHandler.print(NOTIFIED_WHEN_JOIN);
+            }
         } catch (UnableToJoinGameException | IOException e) {
             writer.println(e.getMessage());
             System.out.println(e.getMessage());
@@ -158,13 +160,13 @@ public class CommandExecutor {
 
     public void delete(String gameName) {
 
-        File file = new File("games/" + gameName);
+        File file = new File("games/" + gameName + ".json");
 
         if (file.delete()) {
             outputHandler.printCommands(DELETED_GAME, gameName);
             server.removeGame(gameName);
         } else {
-            writer.println();
+            outputHandler.printCommands(UNABLE_DELETE_GAME, gameName);
         }
     }
 
@@ -173,14 +175,15 @@ public class CommandExecutor {
             String game = readFileAsString("games/" + gameName + ".json");
             Gson gson = new Gson();
             startGame(gson.fromJson(game, Game.class));
+            //todo
         } catch (IOException e) {
-            writer.println(String.format(GAME_DOES_NOT_EXIST, gameName));
+            outputHandler.print(String.format(GAME_DOES_NOT_EXIST, gameName));
         }
     }
 
     public void save(Player player) throws FileNotFoundException {
         if (player.getGame() == null) {
-            writer.println(NO_GAME_TO_SAVE);
+            outputHandler.print(NO_GAME_TO_SAVE);
         } else {
             Gson gson = new Gson();
             String game = gson.toJson(player.getGame());
@@ -188,7 +191,7 @@ public class CommandExecutor {
             try (PrintWriter pw = new PrintWriter(new File("games/" + player.getGame().getName() + ".json"))) {
                 pw.write(game);
                 pw.flush();
-                writer.println(GAME_SAVED);
+                outputHandler.print(GAME_SAVED);
             }
         }
     }
@@ -200,13 +203,17 @@ public class CommandExecutor {
 
         gameConsoleWriter.printBoards();
         gameConsoleWriter.printPickYourShips();
-        game.setStatus(GameStatus.InProgress);
 
     }
 
-    public void leave() {
-        //todo
+    public void leave(Player player) {
+        if (player.getGame() == null) {
+            outputHandler.print(NOT_CURRENTLY_IN_A_GAME);
+        } else {
+            String gameName = player.getGame().getName();
+            player.getGame().leave(player);
+            outputHandler.printCommands(LEFT_GAME, gameName);
+        }
     }
-
 
 }

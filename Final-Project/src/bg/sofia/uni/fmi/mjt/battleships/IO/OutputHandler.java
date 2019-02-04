@@ -48,7 +48,7 @@ public class OutputHandler {
                     games) {
 
                 String gameName = getListGamesText(game.getName(), LIST_GAMES_NAME_LENGTH);
-                String creator = getListGamesText(game.getPlayer1().getUsername(), LIST_GAMES_CREATOR_LENGTH);
+                String creator = getListGamesText(game.getCreator(), LIST_GAMES_CREATOR_LENGTH);
                 String status = getListGamesText(game.getStatus().getName(), LIST_GAMES_STATUS_LENGTH);
                 String players = getListGamesText(String.format(PLAYERS_NUMBER, game.getPlayersNumber()), LIST_GAMES_PLAYERS_LENGTH);
 

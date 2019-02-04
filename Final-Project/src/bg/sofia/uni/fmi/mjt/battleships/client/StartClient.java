@@ -14,11 +14,14 @@ public class StartClient implements Runnable {
 
     @Override
     public void run() {
-        try {
-            System.out.println(CONNECT_COMMANDS);
-            new InputHandler().processClientCommand();
-        } catch (NotConnectedException e) {
-            System.out.println(NOT_CONNECTED_TO_SERVER);
+
+        while (true) {
+            try {
+                System.out.println(CONNECT_COMMANDS);
+                new InputHandler().processClientCommand();
+            } catch (NotConnectedException e) {
+                System.out.println(NOT_CONNECTED_TO_SERVER);
+            }
         }
     }
 }
