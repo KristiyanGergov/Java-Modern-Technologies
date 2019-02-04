@@ -19,13 +19,8 @@ public class Ship {
         return type;
     }
 
-    public Ship(char startRow, char endRow, int startCol, int endCol) {
-        try {
-            this.type = initializeShipType(startRow, endRow, startCol, endCol);
-        } catch (WrongCoordinatesException e) {
-            e.printStackTrace();
-            //todo
-        }
+    public Ship(char startRow, char endRow, int startCol, int endCol) throws WrongCoordinatesException {
+        this.type = initializeShipType(startRow, endRow, startCol, endCol);
         this.shipCoordinates = new ShipCoordinates(startRow, endRow, startCol, endCol);
         this.lives = shipCoordinates.getCellsNumber();
     }

@@ -128,8 +128,7 @@ public class CommandExecutor {
             }
         } catch (UnableToJoinGameException | IOException e) {
             writer.println(e.getMessage());
-            System.out.println(e.getMessage());
-            //todo
+            e.printStackTrace();
         }
     }
 
@@ -178,6 +177,7 @@ public class CommandExecutor {
             //todo
         } catch (IOException e) {
             outputHandler.print(String.format(GAME_DOES_NOT_EXIST, gameName));
+            e.printStackTrace();
         }
     }
 
