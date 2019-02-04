@@ -13,6 +13,7 @@ public class Game implements Serializable {
     private Player player1;
     private Player player2;
     private String creator;
+    private GameStatus status;
 
     public Game(Player player1, String name) {
         this.creator = player1.getUsername();
@@ -21,11 +22,17 @@ public class Game implements Serializable {
         this.name = name;
     }
 
+    public void setStatus(GameStatus status) {
+        this.status = status;
+    }
+
     public String getCreator() {
         return creator;
     }
 
     public GameStatus getStatus() {
+        if (status == GameStatus.Finished)
+            return status;
         if (isFull())
             return GameStatus.InProgress;
         return GameStatus.Pending;
@@ -73,8 +80,8 @@ public class Game implements Serializable {
     }
 
     private void setGuns() {
-        player1.setGun(new Gun(player2.getBoard()));
-        player2.setGun(new Gun(player1.getBoard()));
+        player1.setGun(new Gun(player2.getBoard(), player2.getShipBuilder().getShips()));
+        player2.setGun(new Gun(player1.getBoard(), player1.getShipBuilder().getShips()));
     }
 
     public boolean isFull() {

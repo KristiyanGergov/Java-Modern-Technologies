@@ -1,6 +1,7 @@
 package bg.sofia.uni.fmi.mjt.battleships.util;
 
 import bg.sofia.uni.fmi.mjt.battleships.IO.OutputHandler;
+import bg.sofia.uni.fmi.mjt.battleships.enums.GameStatus;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.InvalidCommandException;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.UnableToJoinGameException;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongCoordinatesException;
@@ -141,6 +142,12 @@ public class CommandExecutor {
 
         } else {
             if (ship.destroyed()) {
+                if (player.getGame().getPlayer1().areAllShipsDestroyed() || player.getGame().getPlayer2().areAllShipsDestroyed()) {
+                    player.getGame().setStatus(GameStatus.Finished);
+                    player.getGame().getPlayer1PrintWriter().println(GAME_FINISHED);
+                    player.getGame().getPlayer2PrintWriter().println(GAME_FINISHED);
+                }
+
                 player.getGame().printMessage(DESTROYED_SHIP_OPPONENT, true);
                 player.getGame().printMessage(DESTROYED_SHIP_YOU, false);
             } else {

@@ -1,6 +1,7 @@
 package bg.sofia.uni.fmi.mjt.battleships.client;
 
 import bg.sofia.uni.fmi.mjt.battleships.IO.InputHandler;
+import bg.sofia.uni.fmi.mjt.battleships.enums.GameStatus;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.InvalidCommandException;
 import bg.sofia.uni.fmi.mjt.battleships.exceptions.WrongCoordinatesException;
 import bg.sofia.uni.fmi.mjt.battleships.models.Player;
@@ -34,7 +35,7 @@ public class ClientConnectionRunnable implements Runnable {
 
             try (PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
 
-                while (!socket.isClosed()) {
+                while (!socket.isClosed() && player.getGame().getStatus() != GameStatus.Finished) {
                     String commandInput = reader.readLine();
 
                     if (commandInput != null) {

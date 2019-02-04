@@ -21,7 +21,7 @@ public class ShipBuilder implements Serializable {
     private int shipsWith3CellsLeft = 3;
     private int shipsWith2CellsLeft = 4;
 
-    private static Map<Ship, Integer> ships;
+    private Map<Ship, Integer> ships;
 
     public ShipBuilder(char[][] board) {
         this.board = board;
@@ -128,7 +128,7 @@ public class ShipBuilder implements Serializable {
         }
     }
 
-    public static Set<Ship> getShips() {
+    public Set<Ship> getShips(){
         return ships.keySet();
     }
 

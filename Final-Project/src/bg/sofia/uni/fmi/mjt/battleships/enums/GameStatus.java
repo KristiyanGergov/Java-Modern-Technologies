@@ -4,7 +4,8 @@ import java.io.Serializable;
 
 public enum GameStatus implements Serializable {
     Pending("pending"),
-    InProgress("in progress");
+    InProgress("in progress"),
+    Finished("finished");
 
     private String name;
 

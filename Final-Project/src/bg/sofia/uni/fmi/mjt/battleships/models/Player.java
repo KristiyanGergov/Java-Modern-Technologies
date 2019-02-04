@@ -22,13 +22,18 @@ public class Player implements Serializable {
     private ShipBuilder shipBuilder;
     private transient Game game;
     private boolean onTurn;
+    private int shipsLeft;
 
+    public ShipBuilder getShipBuilder() {
+        return shipBuilder;
+    }
 
     public Player(String username, Socket socket) {
         this.username = username;
         this.socket = socket;
         this.boardCreator = new BoardCreator(BoardConstants.ROWS, BoardConstants.COLUMNS);
         this.shipBuilder = new ShipBuilder(boardCreator.getBoard());
+        this.shipsLeft = 10;
     }
 
     public boolean isOnTurn() {
@@ -57,6 +62,10 @@ public class Player implements Serializable {
 
     public String getUsername() {
         return username;
+    }
+
+    public boolean areAllShipsDestroyed() {
+        return shipsLeft == 0;
     }
 
     public boolean buildShip(char startRow, char endRow, int startCol, int endCol) throws WrongCoordinatesException, InvalidCommandException {
@@ -93,6 +102,10 @@ public class Player implements Serializable {
             throw new InvalidCommandException("It's your opponent turn!");
 
         Ship ship = gun.hitShip(new Hit(coordinates.toUpperCase()));
+
+        if (ship != null)
+            shipsLeft--;
+
         game.switchTurns();
         return ship;
     }
@@ -101,6 +114,8 @@ public class Player implements Serializable {
         this.boardCreator = new BoardCreator(BoardConstants.ROWS, BoardConstants.COLUMNS);
         this.shipBuilder = new ShipBuilder(boardCreator.getBoard());
         this.onTurn = false;
-        this.game = null;    }
+        this.game = null;
+        this.shipsLeft = 10;
+    }
 
 }

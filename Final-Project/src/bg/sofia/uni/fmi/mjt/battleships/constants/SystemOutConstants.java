@@ -116,4 +116,5 @@ public class SystemOutConstants {
 
     public static final String NOT_CURRENTLY_IN_A_GAME = "You are not currently in a game!";
 
+    public static final String GAME_FINISHED = "Game finished!. \"%s\" won!";
 }

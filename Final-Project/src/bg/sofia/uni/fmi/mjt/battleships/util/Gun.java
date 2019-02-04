@@ -5,6 +5,7 @@ import bg.sofia.uni.fmi.mjt.battleships.models.Hit;
 import bg.sofia.uni.fmi.mjt.battleships.models.Ship;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import static bg.sofia.uni.fmi.mjt.battleships.constants.BoardConstants.DEFAULT_BOARD_FIELD;
 import static bg.sofia.uni.fmi.mjt.battleships.constants.ExceptionConstants.ALREADY_SHOT_FIELD;
@@ -16,9 +17,11 @@ import static bg.sofia.uni.fmi.mjt.battleships.constants.ShipConstants.SHIP_FIEL
 public class Gun implements Serializable {
 
     private char[][] board;
+    private Set<Ship> ships;
 
-    public Gun(char[][] board) {
+    public Gun(char[][] board, Set<Ship> ships) {
         this.board = board;
+        this.ships = ships;
     }
 
     private Ship findShipToHit(Hit hit) throws WrongCoordinatesException {
@@ -27,7 +30,7 @@ public class Gun implements Serializable {
         final int col = hit.getCol();
 
         for (Ship ship :
-                ShipBuilder.getShips()) {
+                ships) {
 
             switch (ship.getType()) {
                 case Vertical:

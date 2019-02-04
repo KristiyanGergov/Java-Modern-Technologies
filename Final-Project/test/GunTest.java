@@ -23,7 +23,7 @@ public class GunTest {
     public void initialize() {
         this.boardCreator = new BoardCreator(ROWS, COLUMNS);
         this.shipBuilder = new ShipBuilder(boardCreator.getBoard());
-        this.gun = new Gun(boardCreator.getBoard());
+        this.gun = new Gun(boardCreator.getBoard(), shipBuilder.getShips());
     }
 
     @Test
@@ -80,10 +80,10 @@ public class GunTest {
 
         assertNotNull(gun.hitShip(new Hit("C3")));
         assertNotNull(gun.hitShip(new Hit("C4")));
-        assertFalse(((Ship) ShipBuilder.getShips().toArray()[0]).destroyed());
+        assertFalse(((Ship) shipBuilder.getShips().toArray()[0]).destroyed());
         assertNotNull(gun.hitShip(new Hit("C5")));
 
-        assertTrue(((Ship) ShipBuilder.getShips().toArray()[0]).destroyed());
+        assertTrue(((Ship) shipBuilder.getShips().toArray()[0]).destroyed());
     }
 
 }
