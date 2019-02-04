@@ -22,8 +22,6 @@ import static bg.sofia.uni.fmi.mjt.battleships.constants.SystemOutConstants.PORT
 
 public class GameServer implements Runnable {
 
-    private BufferedReader reader;
-
     private Map<String, Game> games;
     private Player currentPlayer;
 
@@ -48,10 +46,6 @@ public class GameServer implements Runnable {
             throw new UnableToJoinGameException(FULL_GAME);
     }
 
-    public synchronized BufferedReader getReader() {
-        return reader;
-    }
-
     public synchronized Player getLastJoinedPlayer() {
         return currentPlayer;
     }
@@ -68,19 +62,16 @@ public class GameServer implements Runnable {
 
         while (true) {
 
-
             Socket socket = serverSocket.accept();
             System.out.printf(SystemOutConstants.CLIENT_CONNECTED_TO_SERVER, socket.getInetAddress());
 
-            reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
             String playerName = reader.readLine();
             Player player = new Player(playerName, socket);
             setPlayer(player);
             System.out.printf(PLAYER_CONNECTED, playerName);
 
-//            ServerRunnable serverRunnable = new ServerRunnable(this);
-//            ThreadExecutor.execute(serverRunnable);
             ClientConnectionRunnable clientRunnable = new ClientConnectionRunnable(this, player);
             ThreadExecutor.execute(clientRunnable);
 
@@ -95,8 +86,6 @@ public class GameServer implements Runnable {
             return serverSocket;
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println(PORT_8080_TAKEN);
-
             return null;
         }
 
@@ -112,10 +101,9 @@ public class GameServer implements Runnable {
                 processInput(serverSocket);
             else
                 ThreadExecutor.shutdown();
-
         } catch (IOException e) {
             e.printStackTrace();
-            //todo
+            System.out.println(PORT_8080_TAKEN);
         }
     }
 

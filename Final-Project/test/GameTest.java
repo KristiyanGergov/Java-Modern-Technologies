@@ -47,4 +47,18 @@ public class GameTest {
         assertTrue(game.getPlayer2().isOnTurn());
         assertFalse(game.getPlayer1().isOnTurn());
     }
+
+    @Test
+    public void testLeaveGame() {
+        game.leave(game.getPlayer1());
+
+        assertNull(game.getPlayer1());
+        assertNull(game.getPlayer2());
+
+        game.join(new Player("gosho", new Socket()));
+        assertNotNull(game.getPlayer1());
+        game.join(new Player("pesho", new Socket()));
+        assertTrue(game.isFull());
+    }
+
 }
